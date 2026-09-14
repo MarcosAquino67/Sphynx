@@ -1,0 +1,67 @@
+# main.py
+from fastapi import FastAPI, HTTPException
+from typing import Optional
+
+from data_preguntas import PREGUNTAS_FISICA
+from database import inicializar_bd, get_connection
+from models import SincronizacionPayload
+
+app = FastAPI(
+    title="Sphynx API - Física en Jopara",
+    description="Backend para la app móvil de física bilingüe y sincronización offline",
+    version="1.0.0"
+)
+
+
+@app.on_event("startup")
+def arranque():
+    inicializar_bd()
+
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "API Sphynx corriendo correctamente", "estado": "online"}
+
+
+@app.get("/api/preguntas", summary="Obtener banco de preguntas")
+def obtener_preguntas(idioma: Optional[str] = "jopara"):
+    """
+    Retorna el listado completo de preguntas para que la app las guarde en su SQLite local.
+    """
+    return {"total": len(PREGUNTAS_FISICA), "preguntas": PREGUNTAS_FISICA}
+
+
+@app.post("/api/sincronizar", summary="Sincronizar progreso guardado offline")
+def sincronizar_progreso(payload: SincronizacionPayload):
+    """
+    Recibe la ráfaga de respuestas que el usuario guardó localmente en el celular sin internet.
+    """
+    cantidad = len(payload.respuestas_offline)
+    try:
+        with get_connection() as conn:
+            conn.executemany(
+                """
+                INSERT INTO respuestas
+                    (usuario_id, pregunta_id, respuesta_seleccionada, es_correcta, fecha_respuesta)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        r.usuario_id,
+                        r.pregunta_id,
+                        r.respuesta_seleccionada,
+                        1 if r.es_correcta else 0,
+                        r.fecha_respuesta,
+                    )
+                    for r in payload.respuestas_offline
+                ],
+            )
+            conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al guardar en la base de datos: {e}")
+
+    return {
+        "status": "exito",
+        "mensaje": f"Se sincronizaron {cantidad} respuestas del usuario {payload.usuario_id}",
+        "registros_procesados": cantidad
+    }
