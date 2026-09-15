@@ -1,0 +1,13 @@
+{
+  "name": "sphynx",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently -n backend,mobile -c blue,green \"cd backend && uvicorn main:app --reload\" \"cd mobile && npx expo start\"",
+    "backend": "cd backend && uvicorn main:app --reload",
+    "mobile": "cd mobile && npx expo start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
