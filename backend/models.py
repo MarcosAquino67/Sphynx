@@ -13,4 +13,7 @@ class RespuestaUsuario(BaseModel):
 
 class SincronizacionPayload(BaseModel):
     usuario_id: str
+    hearts: int
+    streak: int
+    last_day: str
     respuestas_offline: List[RespuestaUsuario]

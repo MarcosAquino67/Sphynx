@@ -1,5 +1,4 @@
-import { Alert } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/app-header';

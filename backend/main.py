@@ -56,6 +56,17 @@ def sincronizar_progreso(payload: SincronizacionPayload):
                     for r in payload.respuestas_offline
                 ],
             )
+            conn.execute(
+                """
+                INSERT INTO usuarios (usuario_id, hearts, streak, last_day)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(usuario_id) DO UPDATE SET
+                    hearts = excluded.hearts,
+                    streak = excluded.streak,
+                    last_day = excluded.last_day
+                """,
+                (payload.usuario_id, payload.hearts, payload.streak, payload.last_day),
+            )
             conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al guardar en la base de datos: {e}")

@@ -10,6 +10,14 @@ function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function isYesterday(dateStr: string) {
+  const date = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+  return date.toISOString().slice(0, 10) === yesterday.toISOString().slice(0, 10);
+}
+
 async function readNumber(key: string, fallback: number) {
   const raw = await AsyncStorage.getItem(key);
   const value = raw ? parseInt(raw, 10) : NaN;
@@ -24,11 +32,23 @@ export function useUserProgress() {
     let mounted = true;
     (async () => {
       const h = await readNumber(HEARTS_KEY, DEFAULT_HEARTS);
-      const s = await readNumber(STREAK_KEY, 1);
+      const s = await readNumber(STREAK_KEY, 0);
       const last = await AsyncStorage.getItem(LAST_DAY_KEY);
+      
+      let finalStreak = s;
+      const today = todayKey();
+      
+      if (last === today) {
+        finalStreak = s;
+      } else if (last && isYesterday(last)) {
+        finalStreak = s;
+      } else {
+        finalStreak = 0;
+      }
+
       if (!mounted) return;
       setHearts(h);
-      setStreak(last === todayKey() ? s : 1);
+      setStreak(finalStreak);
     })();
     return () => {
       mounted = false;
@@ -52,12 +72,20 @@ export function useUserProgress() {
   }, []);
 
   const registrarRacha = useCallback(async () => {
-    setStreak((prev) => {
-      const next = todayKey();
-      AsyncStorage.setItem(STREAK_KEY, String(prev + 1));
-      AsyncStorage.setItem(LAST_DAY_KEY, next);
-      return prev + 1;
-    });
+    const today = todayKey();
+    const last = await AsyncStorage.getItem(LAST_DAY_KEY);
+    
+    if (last === today) return; // Ya contó hoy
+
+    let newStreak = 1;
+    if (last && isYesterday(last)) {
+      const prevStreak = await readNumber(STREAK_KEY, 0);
+      newStreak = prevStreak + 1;
+    }
+    
+    await AsyncStorage.setItem(STREAK_KEY, String(newStreak));
+    await AsyncStorage.setItem(LAST_DAY_KEY, today);
+    setStreak(newStreak);
   }, []);
 
   return { hearts, streak, perderCorazon, ganarCorazon, registrarRacha };
