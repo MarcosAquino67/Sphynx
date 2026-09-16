@@ -107,6 +107,8 @@ export const UI = {
   rojoOscuro: '#B94A40',
   morado: '#B388EB',
   moradoOscuro: '#8E63D6',
+  rosa: '#F2A9C4',
+  rosaOscuro: '#C9728F',
   // Nodos metálicos del mapa de niveles
   metalClaro: '#EDF1F4',
   metal: '#B9C2CB',

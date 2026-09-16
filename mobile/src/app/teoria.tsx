@@ -1,9 +1,10 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
-import { MascotContainer } from '@/components/MascotContainer';
+import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad } from '@/data/unidades';
 
@@ -15,6 +16,7 @@ import { obtenerUnidad } from '@/data/unidades';
 export default function TeoriaScreen() {
   const params = useLocalSearchParams<{ unidad?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
+  const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
 
   if (!unidad) {
     router.back();
@@ -26,17 +28,26 @@ export default function TeoriaScreen() {
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <Text style={styles.titulo}>TEORÍA</Text>
+          <Pressable
+            style={styles.idiomaPill}
+            onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')}>
+            <Text style={styles.idiomaTexto}>
+              {idioma === 'es' ? '🇵🇾 Jopara' : '🇪🇸 Español'}
+            </Text>
+          </Pressable>
 
           {/* Tarjeta blanca con ilustración + concepto */}
           <View style={styles.tarjeta}>
-            <MascotContainer
+            <RobotSaludo
               imagen={unidad.mascota}
               ancho={170}
               alto={170}
               conMarco={false}
             />
             <Text style={styles.tarjetaTitulo}>{unidad.teoriaTitulo}</Text>
-            <Text style={styles.tarjetaTexto}>{unidad.teoriaTexto}</Text>
+            <Text style={styles.tarjetaTexto}>
+              {idioma === 'es' ? unidad.teoriaTexto : unidad.teoria_jopara}
+            </Text>
           </View>
 
           <Button3D
@@ -77,6 +88,20 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '900',
     letterSpacing: 2,
+    color: UI.texto,
+  },
+  idiomaPill: {
+    marginTop: Spacing.two,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    borderRadius: 16,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 5,
+  },
+  idiomaTexto: {
+    fontSize: 12,
+    fontWeight: '800',
     color: UI.texto,
   },
   tarjeta: {

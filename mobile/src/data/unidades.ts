@@ -16,11 +16,13 @@ export type Nivel = {
 
 export type Unidad = {
   id: number;
-  /** Título completo para la tarjeta, ej. "UNIDAD 1: MOVIMIENTO Y FUERZAS". */
+  /** Título completo para la tarjeta, ej. "UNIDAD 1: MOVIMIENTO CIRCULAR". */
   titulo: string;
-  /** Nombre corto del tema, ej. "Movimiento y Fuerzas". */
+  /** Nombre corto del tema, ej. "Movimiento Circular". */
   nombre: string;
   descripcion: string;
+  /** Descripción en jopara para la tarjeta y la cabecera. */
+  descripcion_jopara: string;
   /** Color pastel de la tarjeta + su tono oscuro para bordes. */
   color: string;
   colorOscuro: string;
@@ -30,87 +32,121 @@ export type Unidad = {
   /** Contenido de la pantalla de teoría. */
   teoriaTitulo: string;
   teoriaTexto: string;
+  /** Teoría en jopara (se alterna con el botón 🇵🇾/🇪🇸). */
+  teoria_jopara: string;
   niveles: Nivel[];
   /** Si es false, la unidad muestra "Próximamente" y no se puede abrir. */
   disponible: boolean;
 };
 
+/**
+ * Temas oficiales del proyecto (cuadernillos MEC 3er curso):
+ * - Movimiento Circular Uniforme (FIS_PE_3_E_03may07)
+ * - Lentes / Óptica (FIS_PC_3_E_31may04jun)
+ * Los demás temas quedan como "Próximamente".
+ */
 export const UNIDADES: Unidad[] = [
   {
     id: 1,
-    titulo: 'UNIDAD 1: MOVIMIENTO Y FUERZAS',
-    nombre: 'Movimiento y Fuerzas',
-    descripcion: 'Cinemática y leyes de Newton paso a paso',
+    titulo: 'UNIDAD 1: MOVIMIENTO CIRCULAR',
+    nombre: 'Movimiento Circular',
+    descripcion: 'Período, frecuencia y velocidades en el MCU',
+    descripcion_jopara: 'Período, frecuencia ha velocidad MCU-pe',
     color: UI.azul,
     colorOscuro: UI.azulOscuro,
-    icono: 'school',
+    icono: 'reload',
     mascota: require('@/assets/mascotas/gato-regla.jpeg'),
-    teoriaTitulo: 'Movimiento y Fuerzas',
+    teoriaTitulo: 'Movimiento Circular Uniforme',
     teoriaTexto:
-      'La cinemática estudia el movimiento: velocidad, aceleración y caída libre. ' +
-      'Las leyes de Newton explican las fuerzas: inercia, F = m · a, y acción-reacción.',
+      'Un cuerpo tiene MCU cuando describe circunferencias con rapidez constante. ' +
+      'Período (T) es el tiempo de una vuelta, frecuencia (f) las vueltas por segundo. ' +
+      'Velocidad angular ω = ángulo/tiempo (rad/s), tangencial v = ω·R (m/s) y la ' +
+      'aceleración centrípeta apunta siempre al centro (ac = v²/R = ω²·R).',
+    teoria_jopara:
+      'MCU ha’e movimiento circular pya’e constante-reheve. Período (T) ha’e tiempo ' +
+      'peteĩ vuelta-pe, frecuencia (f) vueltas 1 s-pe. Velocidad angular ω = ángulo/tiempo, ' +
+      'tangencial v = ω·R, ha aceleración centrípeta ohecha centro-pe (ac = v²/R).',
     niveles: [
-      { n: 1, nombre: 'Velocidad', leccionId: 1 },
-      { n: 2, nombre: 'Aceleración', leccionId: 2 },
-      { n: 3, nombre: 'Caída libre', leccionId: 3 },
-      { n: 4, nombre: 'Movimiento circular', leccionId: 4 },
-      { n: 5, nombre: 'Primera ley', leccionId: 5 },
-      { n: 6, nombre: 'Segunda ley', leccionId: 6 },
-      { n: 7, nombre: 'Tercera ley', leccionId: 7 },
+      { n: 1, nombre: 'Período y frecuencia', leccionId: 101 },
+      { n: 2, nombre: 'Velocidad angular', leccionId: 102 },
+      { n: 3, nombre: 'Velocidad tangencial', leccionId: 103 },
+      { n: 4, nombre: 'Aceleración centrípeta', leccionId: 104 },
     ],
     disponible: true,
   },
   {
     id: 2,
-    titulo: 'UNIDAD 2: ENERGÍA Y TRABAJO',
-    nombre: 'Energía y Trabajo',
-    descripcion: 'Energía cinética, potencial y potencia',
-    color: UI.verde,
-    colorOscuro: UI.verdeOscuro,
+    titulo: 'UNIDAD 2: LENTES',
+    nombre: 'Lentes',
+    descripcion: 'Convergentes, divergentes e imágenes',
+    descripcion_jopara: 'Convergente, divergente ha imagen',
+    color: UI.naranja,
+    colorOscuro: UI.naranjaOscuro,
     icono: 'lightbulb',
-    mascota: require('@/assets/mascotas/gato-lapiz.jpeg'),
-    teoriaTitulo: 'Energía y Trabajo',
+    mascota: require('@/assets/mascotas/gato-calculadora.jpeg'),
+    teoriaTitulo: 'Lentes Convergentes y Divergentes',
     teoriaTexto:
-      'La energía cinética depende del movimiento (Ec = ½·m·v²) y la potencial de la altura ' +
-      '(Ep = m·g·h). El trabajo es fuerza por distancia (W = F·d).',
+      'La lente convergente es gruesa al centro y junta los rayos: forma imágenes reales ' +
+      'e invertidas (corrige la hipermetropía). La divergente es delgada al centro y abre ' +
+      'los rayos: forma imágenes virtuales, derechas y menores (corrige la miopía). ' +
+      'Elementos: foco (F), centro óptico (O), distancia focal (f) y eje principal.',
+    teoria_jopara:
+      'Lente convergente ombyaty luz: imagen real ha invertida (hipermetropía). ' +
+      'Divergente omosarambi: imagen virtual, derecha ha michĩ (miopía). ' +
+      'Elementos: foco (F), centro óptico (O), distancia focal (f) ha eje principal.',
     niveles: [
-      { n: 1, nombre: 'Energía cinética', leccionId: 8 },
-      { n: 2, nombre: 'Energía potencial', leccionId: 9 },
-      { n: 3, nombre: 'Trabajo y potencia', leccionId: 10 },
+      { n: 1, nombre: 'Lente convergente', leccionId: 201 },
+      { n: 2, nombre: 'Lente divergente', leccionId: 202 },
+      { n: 3, nombre: 'Elementos de la lente', leccionId: 203 },
+      { n: 4, nombre: 'Ecuaciones de lentes', leccionId: 204 },
     ],
     disponible: true,
   },
   {
     id: 3,
-    titulo: 'UNIDAD 3: ELECTRICIDAD Y MAGNETISMO',
-    nombre: 'Electricidad y Magnetismo',
-    descripcion: 'Cargas, ley de Coulomb y campo eléctrico',
+    titulo: 'UNIDAD 3: CINEMÁTICA Y NEWTON',
+    nombre: 'Cinemática y Newton',
+    descripcion: 'Velocidad, aceleración y leyes de Newton',
+    descripcion_jopara: 'Pya’e, aceleración ha leyes de Newton',
     color: UI.morado,
     colorOscuro: UI.moradoOscuro,
-    icono: 'atom',
-    mascota: require('@/assets/mascotas/gato-calculadora.jpeg'),
-    teoriaTitulo: 'Electricidad y Magnetismo',
-    teoriaTexto:
-      'Las cargas opuestas se atraen y las iguales se repelen. La ley de Coulomb calcula ' +
-      'la fuerza eléctrica (F = k·q1·q2/r²) y el campo indica su dirección en el espacio.',
-    niveles: [
-      { n: 1, nombre: 'Carga eléctrica', leccionId: 11 },
-      { n: 2, nombre: 'Ley de Coulomb', leccionId: 12 },
-      { n: 3, nombre: 'Campo eléctrico', leccionId: 13 },
-    ],
-    disponible: true,
+    icono: 'school',
+    mascota: require('@/assets/mascotas/robot.jpeg'),
+    teoriaTitulo: 'Cinemática y Newton',
+    teoriaTexto: 'Contenido en preparación.',
+    teoria_jopara: 'Oñembosako’i gueteri.',
+    niveles: [],
+    disponible: false,
   },
   {
     id: 4,
-    titulo: 'UNIDAD 4: ÓPTICA',
-    nombre: 'Óptica',
-    descripcion: 'Luz, reflexión y refracción',
-    color: UI.naranja,
-    colorOscuro: UI.naranjaOscuro,
-    icono: 'triangle',
+    titulo: 'UNIDAD 4: ENERGÍA Y TRABAJO',
+    nombre: 'Energía y Trabajo',
+    descripcion: 'Energía cinética, potencial y potencia',
+    descripcion_jopara: 'Energía cinética, potencial ha potencia',
+    color: UI.verde,
+    colorOscuro: UI.verdeOscuro,
+    icono: 'flask',
     mascota: require('@/assets/mascotas/robot.jpeg'),
-    teoriaTitulo: 'Óptica',
+    teoriaTitulo: 'Energía y Trabajo',
     teoriaTexto: 'Contenido en preparación.',
+    teoria_jopara: 'Oñembosako’i gueteri.',
+    niveles: [],
+    disponible: false,
+  },
+  {
+    id: 5,
+    titulo: 'UNIDAD 5: ELECTRICIDAD Y MAGNETISMO',
+    nombre: 'Electricidad y Magnetismo',
+    descripcion: 'Cargas, ley de Coulomb y campo eléctrico',
+    descripcion_jopara: 'Carga, ley de Coulomb ha campo eléctrico',
+    color: UI.rosa,
+    colorOscuro: UI.rosaOscuro,
+    icono: 'atom',
+    mascota: require('@/assets/mascotas/robot.jpeg'),
+    teoriaTitulo: 'Electricidad y Magnetismo',
+    teoriaTexto: 'Contenido en preparación.',
+    teoria_jopara: 'Oñembosako’i gueteri.',
     niveles: [],
     disponible: false,
   },

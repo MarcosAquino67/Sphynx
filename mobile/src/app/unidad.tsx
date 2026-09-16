@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { HeaderUnit } from '@/components/HeaderUnit';
-import { MascotContainer } from '@/components/MascotContainer';
+import { RobotSaludo } from '@/components/RobotSaludo';
 import { Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad } from '@/data/unidades';
 
@@ -28,7 +28,12 @@ export default function UnidadScreen() {
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          <HeaderUnit titulo={`Tema:\n${unidad.nombre}`} mostrarAtras variante="simple" />
+          <HeaderUnit
+            titulo={`Tema:\n${unidad.nombre}`}
+            subtitulo={unidad.descripcion_jopara}
+            mostrarAtras
+            variante="simple"
+          />
 
           <View style={styles.botones}>
             <Button3D
@@ -64,7 +69,7 @@ export default function UnidadScreen() {
             />
           </View>
 
-          <MascotContainer imagen={unidad.mascota} ancho={210} alto={210} style={styles.mascota} />
+          <RobotSaludo imagen={unidad.mascota} ancho={210} alto={210} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </View>

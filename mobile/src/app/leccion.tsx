@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/app-header';
 import { Button3D } from '@/components/Button3D';
-import { MascotContainer } from '@/components/MascotContainer';
+import { RobotSaludo } from '@/components/RobotSaludo';
 import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
@@ -108,7 +108,7 @@ export default function LeccionScreen() {
 
           {/* Burbuja de pregunta con la mascota */}
           <View style={styles.preguntaZona}>
-            <MascotContainer
+            <RobotSaludo
               imagen={require('@/assets/mascotas/gato-calculadora.jpeg')}
               ancho={104}
               alto={104}

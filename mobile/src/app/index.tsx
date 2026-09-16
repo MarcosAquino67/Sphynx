@@ -3,7 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { MascotContainer } from '@/components/MascotContainer';
+import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
 
@@ -44,6 +44,7 @@ export default function InicioScreen() {
                 <View style={styles.textos}>
                   <Text style={styles.tarjetaTitulo}>{unidad.titulo}</Text>
                   <Text style={styles.tarjetaDesc}>{unidad.descripcion}</Text>
+                  <Text style={styles.tarjetaJopara}>{unidad.descripcion_jopara}</Text>
                   <View style={styles.pildora}>
                     <Text style={styles.pildoraTexto}>
                       {unidad.disponible ? 'Comenzar' : 'Próximamente'}
@@ -54,8 +55,8 @@ export default function InicioScreen() {
             ))}
           </View>
 
-          {/* Robot mascota al pie */}
-          <MascotContainer
+          {/* Robot mascota al pie (entra con saludo animado) */}
+          <RobotSaludo
             imagen={require('@/assets/mascotas/robot.jpeg')}
             ancho={190}
             alto={190}
@@ -139,6 +140,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: UI.texto,
     opacity: 0.75,
+  },
+  tarjetaJopara: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: UI.texto,
+    opacity: 0.65,
   },
   pildora: {
     alignSelf: 'flex-start',
