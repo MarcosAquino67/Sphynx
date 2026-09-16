@@ -10,11 +10,11 @@ import { useUserProgress } from '@/hooks/use-user-progress';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 /**
- * Pantalla PROGRESO: racha de días, corazones y lecciones completadas.
+ * Pantalla PROGRESO: racha de días y lecciones completadas.
  * Los datos viven en AsyncStorage (offline-first).
  */
 export default function ProgresoScreen() {
-  const { hearts, streak } = useUserProgress();
+  const { streak } = useUserProgress();
   const [completadas, setCompletadas] = useState<number[]>([]);
 
   useFocusEffect(
@@ -37,25 +37,11 @@ export default function ProgresoScreen() {
             <Text style={styles.etiqueta}>días de racha</Text>
           </View>
 
-          <View style={styles.fila}>
-            {/* Tarjeta de corazones */}
-            <View style={[styles.tarjeta, styles.mitad]}>
-              <View style={styles.corazones}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Text key={i} style={[styles.corazon, i >= hearts && styles.corazonApagado]}>
-                    ❤️
-                  </Text>
-                ))}
-              </View>
-              <Text style={styles.etiqueta}>corazones</Text>
-            </View>
-
-            {/* Tarjeta de lecciones */}
-            <View style={[styles.tarjeta, styles.mitad]}>
-              <MaterialCommunityIcons name="medal" size={40} color={UI.verde} />
-              <Text style={styles.numeroGrande}>{completadas.length}</Text>
-              <Text style={styles.etiqueta}>lecciones listas</Text>
-            </View>
+          {/* Tarjeta de lecciones */}
+          <View style={styles.tarjeta}>
+            <MaterialCommunityIcons name="medal" size={40} color={UI.verde} />
+            <Text style={styles.numeroGrande}>{completadas.length}</Text>
+            <Text style={styles.etiqueta}>lecciones listas</Text>
           </View>
 
           <Button3D
@@ -112,14 +98,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  fila: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-    width: '100%',
-  },
-  mitad: {
-    flex: 1,
-  },
   numeroGrande: {
     fontSize: 44,
     fontWeight: '900',
@@ -129,17 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: UI.textoSuave,
-  },
-  corazones: {
-    flexDirection: 'row',
-    gap: 2,
-  },
-  corazon: {
-    fontSize: 20,
-  },
-  corazonApagado: {
-    opacity: 0.25,
-    filter: 'grayscale(1)',
   },
   boton: {
     width: '100%',

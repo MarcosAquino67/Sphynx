@@ -4,7 +4,7 @@ import { Spacing, Sphynx } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 
 export function AppHeader() {
-  const { hearts, streak } = useUserProgress();
+  const { streak } = useUserProgress();
 
   return (
     <View style={styles.header}>
@@ -13,15 +13,9 @@ export function AppHeader() {
         <Text style={styles.logoText}>Sphynx</Text>
       </View>
 
-      <View style={styles.rightGroup}>
-        <View style={styles.pill}>
-          <Text style={styles.pillEmoji}>🔥</Text>
-          <Text style={styles.pillText}>{streak} Días</Text>
-        </View>
-        <View style={styles.pill}>
-          <Text style={styles.pillEmoji}>❤️</Text>
-          <Text style={styles.pillText}>{hearts}</Text>
-        </View>
+      <View style={styles.pill}>
+        <Text style={styles.pillEmoji}>🔥</Text>
+        <Text style={styles.pillText}>{streak} Días</Text>
       </View>
     </View>
   );
@@ -49,11 +43,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '800',
     color: Sphynx.textDark,
-  },
-  rightGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
   },
   pill: {
     flexDirection: 'row',

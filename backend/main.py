@@ -58,14 +58,13 @@ def sincronizar_progreso(payload: SincronizacionPayload):
             )
             conn.execute(
                 """
-                INSERT INTO usuarios (usuario_id, hearts, streak, last_day)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO usuarios (usuario_id, streak, last_day)
+                VALUES (?, ?, ?)
                 ON CONFLICT(usuario_id) DO UPDATE SET
-                    hearts = excluded.hearts,
                     streak = excluded.streak,
                     last_day = excluded.last_day
                 """,
-                (payload.usuario_id, payload.hearts, payload.streak, payload.last_day),
+                (payload.usuario_id, payload.streak, payload.last_day),
             )
             conn.commit()
     except Exception as e:

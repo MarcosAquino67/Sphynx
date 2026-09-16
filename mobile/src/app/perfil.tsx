@@ -12,7 +12,7 @@ import { useUserProgress } from '@/hooks/use-user-progress';
  * (racha, XP y gemas). Botón 3D para editar (próximamente).
  */
 export default function PerfilScreen() {
-  const { hearts, streak } = useUserProgress();
+  const { streak } = useUserProgress();
 
   return (
     <View style={styles.fondo}>
@@ -32,11 +32,6 @@ export default function PerfilScreen() {
               <MaterialCommunityIcons name="fire" size={26} color={UI.naranja} />
               <Text style={styles.statValor}>{streak}</Text>
               <Text style={styles.statEtiqueta}>Racha</Text>
-            </View>
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons name="heart" size={26} color={UI.rojo} />
-              <Text style={styles.statValor}>{hearts}</Text>
-              <Text style={styles.statEtiqueta}>Vidas</Text>
             </View>
             <View style={styles.statItem}>
               <MaterialCommunityIcons name="star" size={26} color={UI.estrella} />

@@ -27,7 +27,7 @@ function tituloLeccion(id: number) {
 /**
  * Pantalla de EJERCICIO (pregunta + opciones A-D).
  * Burbuja de diálogo con la mascota, botones chunky de opción múltiple,
- * explicación en jopara y guardado de racha/corazones/progreso.
+ * explicación en jopara y guardado de racha/progreso.
  */
 export default function LeccionScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
@@ -37,7 +37,7 @@ export default function LeccionScreen() {
   const [indice, setIndice] = useState(0);
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
-  const { hearts, perderCorazon, registrarRacha } = useUserProgress();
+  const { registrarRacha } = useUserProgress();
 
   // Idioma guardado en Ajustes como valor inicial
   useEffect(() => {
@@ -64,13 +64,6 @@ export default function LeccionScreen() {
   const responder = (opcion: string) => {
     if (respondio) return;
     setSeleccion(opcion);
-    if (opcion !== pregunta.respuesta_correcta) {
-      perderCorazon();
-      if (hearts - 1 <= 0) {
-        Alert.alert('💔 Sin corazones', '¡Descansá y volvé mañana para seguir aprendiendo!');
-        router.back();
-      }
-    }
   };
 
   const siguiente = () => {
@@ -147,7 +140,7 @@ export default function LeccionScreen() {
           {respondio && (
             <View style={styles.feedback}>
               <Text style={styles.feedbackTitulo}>
-                {esCorrecta ? '✅ ¡Epeichapo! Correcto' : '❌ Error... ¡Eñemoarandu!'}
+                {esCorrecta ? '✅ ¡Iporã! Correcto' : '❌ Error... ¡Eñemoarandu!'}
               </Text>
               <Text style={styles.feedbackTexto}>{pregunta.explicacion_jopara}</Text>
               <Button3D
