@@ -29,7 +29,7 @@ type Props = {
  * <Image /> cuando quieras que la mascota se mueva al abrir la pantalla.
  */
 export function RobotSaludo({
-  imagen = require('@/assets/mascotas/robot.jpeg'),
+  imagen = require('@/assets/mascotas/robot.png'),
   ancho = 200,
   alto = 200,
   conMarco = true,

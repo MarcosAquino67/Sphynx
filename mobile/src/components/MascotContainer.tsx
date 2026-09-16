@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { RADIO_TARJETA, UI } from '@/constants/theme';
 
 type Props = {
-  /** Imagen local, ej. require('@/assets/mascotas/gato-regla.jpeg'). */
+  /** Imagen local, ej. require('@/assets/mascotas/gato-regla.png'). */
   imagen: ImageSourcePropType;
   /** Ancho en px. */
   ancho?: number;
