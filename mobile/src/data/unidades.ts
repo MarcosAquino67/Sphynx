@@ -55,7 +55,7 @@ export const UNIDADES: Unidad[] = [
     color: UI.azul,
     colorOscuro: UI.azulOscuro,
     icono: 'reload',
-    mascota: require('@/assets/mascotas/gato-regla.jpeg'),
+    mascota: require('@/assets/mascotas/gato-regla.png'),
     teoriaTitulo: 'Movimiento Circular Uniforme',
     teoriaTexto:
       'Un cuerpo tiene MCU cuando describe circunferencias con rapidez constante. ' +
@@ -83,7 +83,7 @@ export const UNIDADES: Unidad[] = [
     color: UI.naranja,
     colorOscuro: UI.naranjaOscuro,
     icono: 'lightbulb',
-    mascota: require('@/assets/mascotas/gato-calculadora.jpeg'),
+    mascota: require('@/assets/mascotas/gato-calculadora.png'),
     teoriaTitulo: 'Lentes Convergentes y Divergentes',
     teoriaTexto:
       'La lente convergente es gruesa al centro y junta los rayos: forma imágenes reales ' +
@@ -111,7 +111,7 @@ export const UNIDADES: Unidad[] = [
     color: UI.morado,
     colorOscuro: UI.moradoOscuro,
     icono: 'school',
-    mascota: require('@/assets/mascotas/robot.jpeg'),
+    mascota: require('@/assets/mascotas/robot.png'),
     teoriaTitulo: 'Cinemática y Newton',
     teoriaTexto: 'Contenido en preparación.',
     teoria_jopara: 'Oñembosako’i gueteri.',
@@ -127,7 +127,7 @@ export const UNIDADES: Unidad[] = [
     color: UI.verde,
     colorOscuro: UI.verdeOscuro,
     icono: 'flask',
-    mascota: require('@/assets/mascotas/robot.jpeg'),
+    mascota: require('@/assets/mascotas/robot.png'),
     teoriaTitulo: 'Energía y Trabajo',
     teoriaTexto: 'Contenido en preparación.',
     teoria_jopara: 'Oñembosako’i gueteri.',
@@ -143,7 +143,7 @@ export const UNIDADES: Unidad[] = [
     color: UI.rosa,
     colorOscuro: UI.rosaOscuro,
     icono: 'atom',
-    mascota: require('@/assets/mascotas/robot.jpeg'),
+    mascota: require('@/assets/mascotas/robot.png'),
     teoriaTitulo: 'Electricidad y Magnetismo',
     teoriaTexto: 'Contenido en preparación.',
     teoria_jopara: 'Oñembosako’i gueteri.',

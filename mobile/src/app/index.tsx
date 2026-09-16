@@ -57,7 +57,7 @@ export default function InicioScreen() {
 
           {/* Robot mascota al pie (entra con saludo animado) */}
           <RobotSaludo
-            imagen={require('@/assets/mascotas/robot.jpeg')}
+            imagen={require('@/assets/mascotas/robot.png')}
             ancho={190}
             alto={190}
             conMarco={false}

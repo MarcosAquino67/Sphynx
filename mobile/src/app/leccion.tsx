@@ -109,7 +109,7 @@ export default function LeccionScreen() {
           {/* Burbuja de pregunta con la mascota */}
           <View style={styles.preguntaZona}>
             <RobotSaludo
-              imagen={require('@/assets/mascotas/gato-calculadora.jpeg')}
+              imagen={require('@/assets/mascotas/gato-calculadora.png')}
               ancho={104}
               alto={104}
               conMarco={false}

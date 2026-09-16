@@ -19,7 +19,7 @@ export default function PerfilScreen() {
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <MascotContainer
-            imagen={require('@/assets/mascotas/gato-saludo.jpeg')}
+            imagen={require('@/assets/mascotas/gato-saludo.png')}
             ancho={150}
             alto={150}
             style={styles.avatar}

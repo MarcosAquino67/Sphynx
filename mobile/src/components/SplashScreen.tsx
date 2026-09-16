@@ -79,7 +79,7 @@ export function SplashScreen({ onFinish }: Props) {
 
       <Animated.View style={[styles.robotContainer, robotStyle]}>
         <MascotContainer
-          imagen={require('@/assets/mascotas/robot.jpeg')}
+          imagen={require('@/assets/mascotas/robot.png')}
           ancho={210}
           alto={210}
         />
