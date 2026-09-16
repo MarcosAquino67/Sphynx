@@ -71,7 +71,53 @@ export const Sphynx = {
   bgDark: '#131F24',
   cardBg: '#F7F7F7',
   cardBgDark: '#1E2E35',
+  // Interfaz estilo mockup "Fisik-IA"
+  bgSoft: '#EAF3F6',
+  nodeBlue: '#4D9FDB',
+  nodeBlueDark: '#3B7FB8',
+  checkGreen: '#3CB85C',
+  correct: '#2ECC71',
+  wrong: '#E74C3C',
+  locked: '#CBD3D9',
+  lockedDark: '#AEB6BF',
+  border: '#D5DBDB',
+  textDark: '#2C3E50',
+  banner: '#5D6D7E',
 } as const;
+
+/**
+ * Paleta pastel de la interfaz gamificada (mockups "Sphynx / Fisik-IA").
+ * Fondos claros, tarjetas blancas con borde contrastado y botones 3D.
+ */
+export const UI = {
+  fondoVerde: '#E8F6EF',
+  fondoCeleste: '#E6F7FF',
+  tarjeta: '#FFFFFF',
+  bordeTarjeta: '#D9E6DD',
+  texto: '#2E3A33',
+  textoSuave: '#6B7B70',
+  // Colores de botones 3D (cara + borde inferior oscuro para el volumen)
+  naranja: '#FF9F45',
+  naranjaOscuro: '#D9731A',
+  azul: '#3FA7F5',
+  azulOscuro: '#2B7FC4',
+  verde: '#4CAF6D',
+  verdeOscuro: '#358A52',
+  rojo: '#E86A5E',
+  rojoOscuro: '#B94A40',
+  morado: '#B388EB',
+  moradoOscuro: '#8E63D6',
+  // Nodos metálicos del mapa de niveles
+  metalClaro: '#EDF1F4',
+  metal: '#B9C2CB',
+  metalOscuro: '#8E99A3',
+  estrella: '#FFC93C',
+  barraFondo: '#FFFFFF',
+  iconoInactivo: '#9AA5A1',
+} as const;
+
+/** Radio estándar de tarjetas blancas (mockups: 20-25). */
+export const RADIO_TARJETA = 22;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;

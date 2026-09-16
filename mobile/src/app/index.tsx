@@ -1,57 +1,159 @@
-import { Alert, ScrollView } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppHeader } from '@/components/app-header';
-import { LessonPath, type PhysicsLesson } from '@/components/lesson-path';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MascotContainer } from '@/components/MascotContainer';
+import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { UNIDADES, type Unidad } from '@/data/unidades';
 
-function handleLessonPress(lesson: PhysicsLesson) {
-  if (lesson.status === 'bloqueada') {
-    Alert.alert('Bloqueada', `Termina la lección anterior para desbloquear "${lesson.titulo}".`);
-    return;
-  }
-  Alert.alert('Ejercicio', `Aquí abrirán las preguntas de "${lesson.titulo}".`);
-}
+/**
+ * Pantalla INICIO: lista de unidades temáticas (mockup "UNIDADES TEMÁTICAS
+ * DE APRENDIZAJE"). Tarjetas pastel con icono, descripción y píldora
+ * Comenzar/Próximamente. Abajo, el robot mascota.
+ */
+export default function InicioScreen() {
+  const abrirUnidad = (unidad: Unidad) => {
+    if (!unidad.disponible) {
+      Alert.alert('Próximamente', `"${unidad.nombre}" estará disponible muy pronto.`);
+      return;
+    }
+    router.push({ pathname: '/unidad', params: { id: String(unidad.id) } } as any);
+  };
 
-export default function HomeScreen() {
   return (
-    <ThemedView style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
-        <AppHeader />
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          <ThemedText type="title" style={styles.heroTitle}>
-            Aprende Física
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.heroSub}>
-            Peve kuatia'i ñe'ẽ porã gua'u ha'e aumenta ojeve.
-          </ThemedText>
-          <LessonPath onPressLesson={handleLessonPress} />
+    <View style={styles.fondo}>
+      <SafeAreaView style={styles.safe} edges={['left', 'right']}>
+        <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
+          {/* Icono casita superior (mockup) */}
+          <View style={styles.casaFondo}>
+            <MaterialCommunityIcons name="home" size={30} color={UI.texto} />
+          </View>
+
+          <Text style={styles.titulo}>UNIDADES TEMÁTICAS{'\n'}DE APRENDIZAJE</Text>
+
+          <View style={styles.lista}>
+            {UNIDADES.map((unidad) => (
+              <Pressable
+                key={unidad.id}
+                onPress={() => abrirUnidad(unidad)}
+                style={[styles.tarjeta, { backgroundColor: unidad.color, borderColor: unidad.colorOscuro }]}>
+                <View style={styles.iconoCaja}>
+                  <MaterialCommunityIcons name={unidad.icono} size={34} color={UI.texto} />
+                </View>
+                <View style={styles.textos}>
+                  <Text style={styles.tarjetaTitulo}>{unidad.titulo}</Text>
+                  <Text style={styles.tarjetaDesc}>{unidad.descripcion}</Text>
+                  <View style={styles.pildora}>
+                    <Text style={styles.pildoraTexto}>
+                      {unidad.disponible ? 'Comenzar' : 'Próximamente'}
+                    </Text>
+                  </View>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+
+          {/* Robot mascota al pie */}
+          <MascotContainer
+            imagen={require('@/assets/mascotas/robot.jpeg')}
+            ancho={190}
+            alto={190}
+            conMarco={false}
+            style={styles.robot}
+          />
         </ScrollView>
       </SafeAreaView>
-    </ThemedView>
+    </View>
   );
 }
 
-import { StyleSheet } from 'react-native';
-
 const styles = StyleSheet.create({
-  contentContainer: {
+  fondo: {
+    flex: 1,
+    backgroundColor: UI.fondoVerde,
+  },
+  safe: {
+    flex: 1,
+  },
+  contenido: {
     alignItems: 'center',
     paddingHorizontal: Spacing.four,
-    paddingBottom: BottomTabInset + Spacing.five,
-    maxWidth: MaxContentWidth,
-    alignSelf: 'center',
-    width: '100%',
+    paddingTop: Spacing.three,
+    paddingBottom: Spacing.four,
   },
-  heroTitle: {
-    textAlign: 'center',
+  casaFondo: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titulo: {
     marginTop: Spacing.two,
-  },
-  heroSub: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: UI.texto,
     textAlign: 'center',
-    marginTop: Spacing.one,
-    marginBottom: Spacing.two,
+    letterSpacing: 0.5,
+  },
+  lista: {
+    width: '100%',
+    gap: Spacing.three,
+    marginTop: Spacing.three,
+  },
+  tarjeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    padding: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+  iconoCaja: {
+    width: 58,
+    height: 58,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textos: {
+    flex: 1,
+    gap: 4,
+  },
+  tarjetaTitulo: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: UI.texto,
+  },
+  tarjetaDesc: {
+    fontSize: 12,
+    color: UI.texto,
+    opacity: 0.75,
+  },
+  pildora: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    backgroundColor: UI.tarjeta,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
+  },
+  pildoraTexto: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: UI.texto,
+  },
+  robot: {
+    marginTop: Spacing.three,
   },
 });

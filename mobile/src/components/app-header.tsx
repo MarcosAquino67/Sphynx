@@ -1,35 +1,29 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { CatMascot } from '@/components/cat-mascot';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { Spacing, Sphynx } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 
 export function AppHeader() {
   const { hearts, streak } = useUserProgress();
 
   return (
-    <ThemedView style={styles.header}>
-      <View style={styles.pill}>
-        <ThemedText style={styles.pillIcon}>🔥</ThemedText>
-        <ThemedText type="smallBold" style={styles.pillText}>
-          {streak}
-        </ThemedText>
+    <View style={styles.header}>
+      <View style={styles.logoRow}>
+        <Text style={styles.logoIcon}>⚛️</Text>
+        <Text style={styles.logoText}>Sphynx</Text>
       </View>
 
       <View style={styles.rightGroup}>
         <View style={styles.pill}>
-          <ThemedText style={styles.pillIcon}>❤️</ThemedText>
-          <ThemedText type="smallBold" style={styles.pillText}>
-            {hearts}
-          </ThemedText>
+          <Text style={styles.pillEmoji}>🔥</Text>
+          <Text style={styles.pillText}>{streak} Días</Text>
         </View>
-        <View style={styles.avatar}>
-          <CatMascot size={40} />
+        <View style={styles.pill}>
+          <Text style={styles.pillEmoji}>❤️</Text>
+          <Text style={styles.pillText}>{hearts}</Text>
         </View>
       </View>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -41,30 +35,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.three,
     paddingBottom: Spacing.two,
+    backgroundColor: 'transparent',
   },
-  pill: {
+  logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.one,
-    backgroundColor: '#FFF3D6',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one,
-    borderRadius: Spacing.five,
   },
-  pillIcon: {
-    fontSize: 18,
+  logoIcon: {
+    fontSize: 22,
   },
-  pillText: {
-    color: '#7A5C1E',
+  logoText: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: Sphynx.textDark,
   },
   rightGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.two,
   },
-  avatar: {
-    borderRadius: 24,
-    backgroundColor: '#F0EDD9',
-    padding: 2,
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.half,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Sphynx.border,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+    borderRadius: Spacing.five,
+  },
+  pillEmoji: {
+    fontSize: 14,
+  },
+  pillText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Sphynx.textDark,
   },
 });
