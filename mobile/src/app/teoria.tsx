@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AccordionItem } from '@/components/AccordionItem';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
-import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
- * Pantalla TEORÍA (mockup "TEORÍA").
- * Tarjeta blanca grande con ilustración (mascota), título, explicación
- * y botón 3D EJERCICIOS que lleva al mapa de niveles.
+ * Pantalla APRENDER / TEORÍA con secciones desplegables (acordeón).
+ * Cada subtema muestra su teoría en tarjetas que se abren/cierran
+ * a ritmo del estudiante, en español o jopara.
  */
 export default function TeoriaScreen() {
   const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
@@ -28,7 +29,7 @@ export default function TeoriaScreen() {
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          <Text style={styles.titulo}>TEORÍA</Text>
+          <Text style={styles.titulo}>{sub.teoriaTitulo.toUpperCase()}</Text>
           <Pressable
             style={styles.idiomaPill}
             onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')}>
@@ -37,20 +38,26 @@ export default function TeoriaScreen() {
             </Text>
           </Pressable>
 
-          {/* Tarjeta blanca con ilustración + concepto */}
-          <View style={styles.tarjeta}>
-            <RobotSaludo
-              imagen={sub.mascota}
-              ancho={170}
-              alto={170}
-              conMarco={false}
-            />
-            <Text style={styles.tarjetaTitulo}>{sub.teoriaTitulo}</Text>
-            <Text style={styles.tarjetaTexto}>
-              {idioma === 'es' ? sub.teoriaTexto : sub.teoria_jopara}
-            </Text>
-            <Text style={styles.fuente}>Fuente: Cuadernillo MEC · Física 3er curso</Text>
+          <RobotSaludo
+            imagen={sub.mascota}
+            ancho={130}
+            alto={130}
+            conMarco={false}
+          />
+
+          {/* Secciones desplegables (la primera empieza abierta) */}
+          <View style={styles.acordeon}>
+            {sub.secciones.map((sec, i) => (
+              <AccordionItem
+                key={sec.titulo}
+                titulo={sec.titulo}
+                contenido={idioma === 'es' ? sec.texto_es : sec.texto_jopara}
+                abiertoInicial={i === 0}
+              />
+            ))}
           </View>
+
+          <Text style={styles.fuente}>Fuente: Cuadernillo MEC · Física 3er curso</Text>
 
           <Button3D
             titulo="EJERCICIOS"
@@ -89,10 +96,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.four,
   },
   titulo: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '900',
-    letterSpacing: 2,
+    letterSpacing: 1,
     color: UI.texto,
+    textAlign: 'center',
   },
   idiomaPill: {
     marginTop: Spacing.two,
@@ -108,35 +116,13 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: UI.texto,
   },
-  tarjeta: {
+  acordeon: {
     width: '100%',
+    gap: Spacing.three,
     marginTop: Spacing.three,
-    backgroundColor: UI.tarjeta,
-    borderRadius: RADIO_TARJETA,
-    borderWidth: 2,
-    borderColor: UI.bordeTarjeta,
-    padding: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.two,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-  },
-  tarjetaTitulo: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: UI.texto,
-    textAlign: 'center',
-  },
-  tarjetaTexto: {
-    fontSize: 15,
-    lineHeight: 23,
-    color: UI.texto,
-    textAlign: 'center',
   },
   fuente: {
+    marginTop: Spacing.three,
     fontSize: 11,
     fontStyle: 'italic',
     color: UI.textoSuave,
@@ -144,7 +130,7 @@ const styles = StyleSheet.create({
   },
   boton: {
     width: '100%',
-    marginTop: Spacing.four,
+    marginTop: Spacing.three,
   },
   backPage: {
     marginTop: Spacing.three,

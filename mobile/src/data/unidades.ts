@@ -14,6 +14,14 @@ export type Nivel = {
   leccionId: number;
 };
 
+export type SeccionTeoria = {
+  /** Título de la sección desplegable, ej. "Definición". */
+  titulo: string;
+  texto_es: string;
+  /** Versión en jopara (se alterna con el botón 🇵🇾/🇪🇸). */
+  texto_jopara: string;
+};
+
 export type Subtema = {
   id: number;
   /** Nombre del subtema, ej. "Movimiento Circular". */
@@ -24,11 +32,10 @@ export type Subtema = {
   icono: IconoMCI;
   /** Mascota que acompaña las pantallas del subtema. */
   mascota: ImageSourcePropType;
-  /** Contenido de la pantalla de teoría. */
+  /** Título de la pantalla de teoría. */
   teoriaTitulo: string;
-  teoriaTexto: string;
-  /** Teoría en jopara (se alterna con el botón 🇵🇾/🇪🇸). */
-  teoria_jopara: string;
+  /** Secciones desplegables (acordeón) de la teoría. */
+  secciones: SeccionTeoria[];
   niveles: Nivel[];
 };
 
@@ -79,15 +86,30 @@ export const UNIDADES: Unidad[] = [
         icono: 'reload',
         mascota: require('@/assets/mascotas/gato-regla.png'),
         teoriaTitulo: 'Movimiento Circular Uniforme',
-        teoriaTexto:
-          'Un cuerpo tiene MCU cuando describe circunferencias con rapidez constante. ' +
-          'Período (T) es el tiempo de una vuelta, frecuencia (f) las vueltas por segundo. ' +
-          'Velocidad angular ω = ángulo/tiempo (rad/s), tangencial v = ω·R (m/s) y la ' +
-          'aceleración centrípeta apunta siempre al centro (ac = v²/R = ω²·R).',
-        teoria_jopara:
-          'MCU ha’e movimiento circular pya’e constante reheve. Período (T) ha’e tiempo ' +
-          'peteĩ vuelta-pe, frecuencia (f) vueltas 1 s-pe. Velocidad angular ω = ángulo/tiempo, ' +
-          'tangencial v = ω·R, ha aceleración centrípeta ohecha centro-pe (ac = v²/R).',
+        secciones: [
+          {
+            titulo: 'Definición',
+            texto_es:
+              'Un objeto tiene MCU cuando describe circunferencias de radio fijo con rapidez constante: ' +
+              'recorre arcos iguales en intervalos de tiempo iguales.',
+            texto_jopara: 'MCU ha’e movimiento circular pya’e constante reheve.',
+          },
+          {
+            titulo: 'Magnitudes',
+            texto_es:
+              'Período (T): tiempo de una vuelta. Frecuencia (f): vueltas por segundo (Hz). ' +
+              'Velocidad angular (ω): ángulo/tiempo (rad/s). Velocidad tangencial (v): sobre la ' +
+              'trayectoria (m/s). Aceleración centrípeta (ac): radial hacia el centro.',
+            texto_jopara:
+              'T = tiempo peteĩ vuelta-pe. f = vueltas 1 s-pe. ω = ángulo/tiempo. ' +
+              'v = ω·R. ac ohecha centro-pe.',
+          },
+          {
+            titulo: 'Ecuaciones',
+            texto_es: 'θ = ω·t · v = ω·R · ac = v²/R = ω²·R · T = 1/f',
+            texto_jopara: 'θ = ω·t. v = ω·R. ac = v²/R. T = 1/f.',
+          },
+        ],
         niveles: [
           { n: 1, nombre: 'Período y frecuencia', leccionId: 101 },
           { n: 2, nombre: 'Velocidad angular', leccionId: 102 },
@@ -117,15 +139,56 @@ export const UNIDADES: Unidad[] = [
         icono: 'lightbulb',
         mascota: require('@/assets/mascotas/gato-calculadora.png'),
         teoriaTitulo: 'Lentes Convergentes y Divergentes',
-        teoriaTexto:
-          'La lente convergente es gruesa al centro y junta los rayos: forma imágenes reales ' +
-          'e invertidas (corrige la hipermetropía). La divergente es delgada al centro y abre ' +
-          'los rayos: forma imágenes virtuales, derechas y menores (corrige la miopía). ' +
-          'Elementos: foco (F), centro óptico (O), distancia focal (f) y eje principal.',
-        teoria_jopara:
-          'Lente convergente ombyaty luz: imagen real ha invertida (hipermetropía). ' +
-          'Divergente omosarambi: imagen virtual, derecha ha michĩ (miopía). ' +
-          'Elementos: foco (F), centro óptico (O), distancia focal (f) ha eje principal.',
+        secciones: [
+          {
+            titulo: 'Definición',
+            texto_es:
+              'Son medios transparentes limitados por dos superficies, de las cuales al menos una es curva.',
+            texto_jopara: 'Lente ha’e mba’e hesakãva, mokõi superficie orekóva.',
+          },
+          {
+            titulo: 'Elementos',
+            texto_es:
+              '• Centros de curvatura (C, C’): centros geométricos de las superficies curvas.\n' +
+              '• Eje principal: línea imaginaria que une los centros de curvatura.\n' +
+              '• Centro óptico (O): punto de intersección de la lente con el eje principal.\n' +
+              '• Foco (F y F’): punto del eje principal por donde pasan los rayos refractados.\n' +
+              '• Distancia focal (f y f’): distancia entre el foco y el centro óptico.',
+            texto_jopara:
+              'Foco (F): upépe oñembyaty rayos. Centro óptico (O): upépe ohasáva noñemomýi. ' +
+              'Distancia focal (f): F ha O mbytépe.',
+          },
+          {
+            titulo: 'Tipos de lentes',
+            texto_es:
+              'Convergente: mayor grosor en el centro; desvía la luz hacia dentro. ' +
+              'Imágenes reales e invertidas (corrige hipermetropía). Variedades: biconvexa, ' +
+              'plano-convexa y menisco convergente.\n\n' +
+              'Divergente: más delgada en el centro; desvía la luz hacia fuera. ' +
+              'Imágenes virtuales, derechas y menores (corrige miopía). Variedades: ' +
+              'bicóncava, plano-cóncava y menisco divergente.',
+            texto_jopara:
+              'Convergente ombyaty luz: imagen real ha invertida (hipermetropía). ' +
+              'Divergente omosarambi: imagen virtual, derecha ha michĩ (miopía).',
+          },
+          {
+            titulo: 'Construcción de imágenes',
+            texto_es:
+              '1. Todo rayo paralelo al eje se refracta pasando por el foco imagen.\n' +
+              '2. Todo rayo que pasa por el centro óptico no se desvía.\n' +
+              '3. Todo rayo que pasa por el foco objeto se refracta paralelo al eje.',
+            texto_jopara:
+              'Regla 1: paralelo → foco. Regla 2: centro rupi → noñemomýi. ' +
+              'Regla 3: foco rupi → osẽ paralelo.',
+          },
+          {
+            titulo: 'Ecuaciones',
+            texto_es:
+              '1/f = 1/do + 1/di (do: objeto, di: imagen). Aumento: A = −di/do. ' +
+              'Convergente: f’ > 0 (foco real). Divergente: f’ < 0 (foco virtual).',
+            texto_jopara: '1/f = 1/do + 1/di. Aumento A = -di/do.',
+          },
+        ],
         niveles: [
           { n: 1, nombre: 'Lente convergente', leccionId: 201 },
           { n: 2, nombre: 'Lente divergente', leccionId: 202 },

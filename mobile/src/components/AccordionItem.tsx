@@ -1,0 +1,92 @@
+import { useState } from 'react';
+import { LayoutAnimation, Platform, Pressable, StyleSheet, Text, UIManager, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+
+// En Android hay que habilitar la animación de layout explícitamente
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+type Props = {
+  /** Título de la sección, ej. "Definición". */
+  titulo: string;
+  /** Contenido que se muestra al desplegar. */
+  contenido: string;
+  /** Si empieza abierto (por defecto solo la primera sección). */
+  abiertoInicial?: boolean;
+};
+
+/**
+ * Sección desplegable (acordeón) estilo chunky.
+ * Toca el encabezado para abrir/cerrar con animación suave.
+ * Cada item maneja su propio estado independiente.
+ */
+export function AccordionItem({ titulo, contenido, abiertoInicial = false }: Props) {
+  const [abierto, setAbierto] = useState(abiertoInicial);
+
+  const alternar = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setAbierto((v) => !v);
+  };
+
+  return (
+    <View style={styles.tarjeta}>
+      <Pressable onPress={alternar} style={({ pressed }) => [styles.encabezado, pressed && styles.presionado]}>
+        <Text style={styles.titulo}>{titulo}</Text>
+        <MaterialCommunityIcons
+          name={abierto ? 'chevron-up' : 'chevron-down'}
+          size={24}
+          color={UI.azulOscuro}
+        />
+      </Pressable>
+      {abierto && (
+        <View style={styles.contenido}>
+          <Text style={styles.texto}>{contenido}</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tarjeta: {
+    width: '100%',
+    backgroundColor: UI.tarjeta,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    borderBottomWidth: 5,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  encabezado: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.three,
+    backgroundColor: UI.fondoCeleste,
+  },
+  presionado: {
+    opacity: 0.8,
+  },
+  titulo: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: UI.texto,
+  },
+  contenido: {
+    padding: Spacing.three,
+    backgroundColor: UI.tarjeta,
+  },
+  texto: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: UI.texto,
+  },
+});
