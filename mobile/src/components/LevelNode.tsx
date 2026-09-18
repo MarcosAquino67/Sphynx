@@ -15,6 +15,8 @@ type Props = {
   etiqueta?: string;
   /** Diámetro del nodo en px. */
   tamano?: number;
+  /** Color de fondo de la etiqueta (para tapar el camino detrás del texto). */
+  fondoEtiqueta?: string;
   /** Acción al tocar el nodo. */
   onPress?: () => void;
 };
@@ -25,7 +27,7 @@ type Props = {
  * - activo: anillo degradado azul/violeta con estrella iluminada + resplandor.
  * - completado: verde metálico con tilde.
  */
-export function LevelNode({ nivel, estado = 'bloqueado', etiqueta, tamano = 76, onPress }: Props) {
+export function LevelNode({ nivel, estado = 'bloqueado', etiqueta, tamano = 76, fondoEtiqueta = 'transparent', onPress }: Props) {
   const esActivo = estado === 'activo';
   const esCompletado = estado === 'completado';
 
@@ -72,14 +74,22 @@ export function LevelNode({ nivel, estado = 'bloqueado', etiqueta, tamano = 76, 
           </View>
         </LinearGradient>
       </Pressable>
-      <Text style={styles.nivel}>Niv. {nivel}</Text>
-      {etiqueta ? <Text style={styles.etiqueta}>{etiqueta}</Text> : null}
+      <View style={[styles.etiquetaFondo, { backgroundColor: fondoEtiqueta }]}>
+        <Text style={styles.nivel}>Niv. {nivel}</Text>
+        {etiqueta ? <Text style={styles.etiqueta}>{etiqueta}</Text> : null}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: {
+    alignItems: 'center',
+  },
+  etiquetaFondo: {
+    marginTop: 6,
+    paddingHorizontal: 8,
+    borderRadius: 8,
     alignItems: 'center',
   },
   anillo: {
@@ -105,7 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nivel: {
-    marginTop: 6,
     fontSize: 13,
     fontWeight: '800',
     color: UI.texto,

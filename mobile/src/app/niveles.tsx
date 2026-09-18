@@ -3,6 +3,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, Vi
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
 
 import { Button3D } from '@/components/Button3D';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
@@ -11,12 +12,32 @@ import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 const NODO = 76;
-const PASO_Y = 128;
+const PASO_Y = 152;
 const LINEA = '#D9E6DD';
 
-/** Posición horizontal del nodo i: onda seno para el zig-zag (fracción del ancho). */
+/** Posiciones del centro del nodo (fracción del ancho): zig-zag alternado. */
+const POSICIONES = [0.2, 0.5, 0.8, 0.5];
+
 function fraccionX(i: number) {
-  return 0.5 + 0.32 * Math.sin(i * 0.95);
+  return POSICIONES[i % POSICIONES.length];
+}
+
+/** Curva suave (Catmull-Rom → Bézier) que une todos los centros. */
+function caminoSuave(pts: { x: number; y: number }[]) {
+  if (pts.length < 2) return '';
+  let d = `M ${pts[0].x},${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C ${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${p2.x},${p2.y}`;
+  }
+  return d;
 }
 
 function estadoDe(nivel: Nivel, completadas: number[], indicePrimerPendiente: number, indice: number): EstadoNivel {
@@ -90,30 +111,17 @@ export default function NivelesScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          {/* Camino en zig-zag */}
-          <View style={[styles.camino, { height: niveles.length * PASO_Y, width: ancho }]}>
-            {niveles.map((nivel, i) => {
-              if (i === niveles.length - 1) return null;
-              const a = centros[i];
-              const b = centros[i + 1];
-              const dx = b.cx - a.cx;
-              const largo = Math.sqrt(dx * dx + PASO_Y * PASO_Y);
-              const angulo = (Math.atan2(dx, PASO_Y) * 180) / Math.PI;
-              return (
-                <View
-                  key={`c-${nivel.leccionId}`}
-                  style={[
-                    styles.conector,
-                    {
-                      left: (a.cx + b.cx) / 2 - largo / 2,
-                      top: a.cy + PASO_Y / 2 - 2,
-                      width: largo,
-                      transform: [{ rotate: `${angulo}deg` }],
-                    },
-                  ]}
-                />
-              );
-            })}
+          {/* Camino curvo continuo que une los nodos */}
+          <View style={[styles.camino, { height: niveles.length * PASO_Y + 60, width: ancho }]}>
+            <Svg width={ancho} height={niveles.length * PASO_Y + 60}>
+              <Path
+                d={caminoSuave(centros.map((c) => ({ x: c.cx, y: c.cy })))}
+                fill="none"
+                stroke={LINEA}
+                strokeWidth={6}
+                strokeLinecap="round"
+              />
+            </Svg>
             {niveles.map((nivel, i) => (
               <View
                 key={nivel.leccionId}
@@ -121,13 +129,13 @@ export default function NivelesScreen() {
                   position: 'absolute',
                   left: centros[i].cx - NODO / 2,
                   top: centros[i].cy - NODO / 2,
-                  opacity: i === Math.min(seleccionado, niveles.length - 1) ? 1 : 0.92,
                 }}>
                 <LevelNode
                   nivel={nivel.n}
                   estado={estadoDe(nivel, completadas, indiceActivo, i)}
                   etiqueta={nivel.nombre}
                   tamano={NODO}
+                  fondoEtiqueta={UI.fondoVerde}
                   onPress={() => tocarNodo(nivel, i)}
                 />
               </View>
@@ -205,12 +213,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginTop: Spacing.two,
     alignSelf: 'center',
-  },
-  conector: {
-    position: 'absolute',
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: LINEA,
   },
   panel: {
     flexDirection: 'row',
