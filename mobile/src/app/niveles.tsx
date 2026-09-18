@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button3D } from '@/components/Button3D';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { MaxContentWidth, RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
-import { obtenerUnidad, type Nivel } from '@/data/unidades';
+import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 const NODO = 76;
@@ -31,8 +31,9 @@ function estadoDe(nivel: Nivel, completadas: number[], indicePrimerPendiente: nu
  * Abajo: panel "Selección" + botón 3D Empezar que abre la lección.
  */
 export default function NivelesScreen() {
-  const params = useLocalSearchParams<{ unidad?: string }>();
+  const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
+  const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
   const { width } = useWindowDimensions();
 
   const [completadas, setCompletadas] = useState<number[]>([]);
@@ -44,12 +45,12 @@ export default function NivelesScreen() {
     }, []),
   );
 
-  if (!unidad || unidad.niveles.length === 0) {
+  if (!unidad || !sub || sub.niveles.length === 0) {
     router.back();
     return null;
   }
 
-  const niveles = unidad.niveles;
+  const niveles = sub.niveles;
   const ancho = Math.min(width, MaxContentWidth) - Spacing.four * 2;
   const primerPendiente = niveles.findIndex((n) => !completadas.includes(n.leccionId));
   const indiceActivo = primerPendiente === -1 ? niveles.length - 1 : primerPendiente;
@@ -84,7 +85,7 @@ export default function NivelesScreen() {
             <Text style={styles.pildoraTexto}>Ejercicios</Text>
           </View>
           <View style={styles.pildora}>
-            <Text style={styles.pildoraTexto}>TEMA: {unidad.nombre}</Text>
+            <Text style={styles.pildoraTexto}>TEMA: {sub.nombre}</Text>
           </View>
         </View>
 

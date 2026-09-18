@@ -8,14 +8,14 @@ import { HeaderUnit } from '@/components/HeaderUnit';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
-import { obtenerUnidad, type Nivel } from '@/data/unidades';
+import { obtenerUnidad, type Nivel, type Subtema } from '@/data/unidades';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 /**
- * Pantalla SUBTEMAS: menú extra dentro de un tema.
- * Lista los subtemas (niveles) de la unidad con su estado
- * (completado / activo / bloqueado). Al tocar uno se abre el
- * menú de acciones (Aprender / Experimentar / Ejercicios).
+ * Pantalla SUBTEMAS: secciones dentro del tema.
+ * Cada subtema muestra su cabecera (nombre + progreso) y sus niveles.
+ * Al tocar un nivel se abre el menú de acciones
+ * (Aprender / Experimentar / Ejercicios) de esa lección.
  */
 export default function SubtemasScreen() {
   const params = useLocalSearchParams<{ unidad?: string }>();
@@ -29,26 +29,35 @@ export default function SubtemasScreen() {
     }, []),
   );
 
-  if (!unidad || unidad.niveles.length === 0) {
+  if (!unidad || unidad.subtemas.length === 0) {
     router.back();
     return null;
   }
 
-  const primerPendiente = unidad.niveles.findIndex((n) => !completadas.includes(n.leccionId));
+  const progresoDe = (sub: Subtema) => {
+    const total = sub.niveles.length;
+    if (total === 0) return 0;
+    const hechas = sub.niveles.filter((n) => completadas.includes(n.leccionId)).length;
+    return Math.round((hechas / total) * 100);
+  };
 
-  const estadoDe = (nivel: Nivel, indice: number): EstadoNivel => {
+  const estadoDe = (sub: Subtema, nivel: Nivel, indice: number): EstadoNivel => {
     if (completadas.includes(nivel.leccionId)) return 'completado';
+    const primerPendiente = sub.niveles.findIndex((n) => !completadas.includes(n.leccionId));
     if (indice === primerPendiente) return 'activo';
     return 'bloqueado';
   };
 
-  const abrirSubtema = (nivel: Nivel, indice: number) => {
-    if (estadoDe(nivel, indice) === 'bloqueado') {
-      Alert.alert('Bloqueado', `Completá el subtema anterior para desbloquear "${nivel.nombre}".`);
+  const abrirNivel = (sub: Subtema, nivel: Nivel, indice: number) => {
+    if (estadoDe(sub, nivel, indice) === 'bloqueado') {
+      Alert.alert('Bloqueado', `Completá el nivel anterior para desbloquear "${nivel.nombre}".`);
       return;
     }
     router.push(
-      { pathname: '/unidad', params: { unidad: String(unidad.id), leccion: String(nivel.leccionId) } } as any,
+      {
+        pathname: '/unidad',
+        params: { unidad: String(unidad.id), subtema: String(sub.id), leccion: String(nivel.leccionId) },
+      } as any,
     );
   };
 
@@ -63,37 +72,57 @@ export default function SubtemasScreen() {
             variante="simple"
           />
 
-          <View style={styles.lista}>
-            {unidad.niveles.map((nivel, i) => {
-              const estado = estadoDe(nivel, i);
-              const bloqueado = estado === 'bloqueado';
-              return (
-                <Pressable
-                  key={nivel.leccionId}
-                  onPress={() => abrirSubtema(nivel, i)}
-                  style={[styles.tarjeta, bloqueado && styles.tarjetaBloqueada]}>
-                  <LevelNode nivel={nivel.n} estado={estado} tamano={58} />
-                  <View style={styles.textos}>
-                    <Text style={styles.subtemaTitulo}>
-                      Subtema {nivel.n}: {nivel.nombre}
-                    </Text>
-                    <Text style={styles.subtemaEstado}>
-                      {estado === 'completado'
-                        ? '✅ Completado'
-                        : estado === 'activo'
-                          ? '▶ ¡Te toca este!'
-                          : '🔒 Bloqueado'}
-                    </Text>
+          {unidad.subtemas.map((sub) => (
+            <View key={sub.id} style={styles.seccion}>
+              {/* Cabecera del subtema */}
+              <View style={[styles.subHeader, { backgroundColor: unidad.color, borderColor: unidad.colorOscuro }]}>
+                <View style={styles.iconoCaja}>
+                  <MaterialCommunityIcons name={sub.icono} size={28} color={UI.texto} />
+                </View>
+                <View style={styles.subTextos}>
+                  <Text style={styles.subTitulo}>Subtema: {sub.nombre}</Text>
+                  <Text style={styles.subDesc}>{sub.descripcion_jopara}</Text>
+                  <View style={styles.barraFondo}>
+                    <View style={[styles.barraRelleno, { width: `${progresoDe(sub)}%` }]} />
                   </View>
-                  <MaterialCommunityIcons
-                    name="chevron-right"
-                    size={26}
-                    color={bloqueado ? UI.iconoInactivo : unidad.colorOscuro}
-                  />
-                </Pressable>
-              );
-            })}
-          </View>
+                  <Text style={styles.subProgreso}>{progresoDe(sub)}% completado</Text>
+                </View>
+              </View>
+
+              {/* Niveles del subtema */}
+              <View style={styles.lista}>
+                {sub.niveles.map((nivel, i) => {
+                  const estado = estadoDe(sub, nivel, i);
+                  const bloqueado = estado === 'bloqueado';
+                  return (
+                    <Pressable
+                      key={nivel.leccionId}
+                      onPress={() => abrirNivel(sub, nivel, i)}
+                      style={[styles.tarjeta, bloqueado && styles.tarjetaBloqueada]}>
+                      <LevelNode nivel={nivel.n} estado={estado} tamano={58} />
+                      <View style={styles.textos}>
+                        <Text style={styles.nivelTitulo}>
+                          Nivel {nivel.n}: {nivel.nombre}
+                        </Text>
+                        <Text style={styles.nivelEstado}>
+                          {estado === 'completado'
+                            ? '✅ Completado'
+                            : estado === 'activo'
+                              ? '▶ ¡Te toca este!'
+                              : '🔒 Bloqueado'}
+                        </Text>
+                      </View>
+                      <MaterialCommunityIcons
+                        name="chevron-right"
+                        size={26}
+                        color={bloqueado ? UI.iconoInactivo : unidad.colorOscuro}
+                      />
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
 
           <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} style={styles.mascota} />
         </ScrollView>
@@ -116,10 +145,67 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
     paddingBottom: Spacing.four,
   },
-  lista: {
+  seccion: {
     width: '100%',
-    gap: Spacing.three,
     marginTop: Spacing.three,
+  },
+  subHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    padding: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+  iconoCaja: {
+    width: 52,
+    height: 52,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subTextos: {
+    flex: 1,
+    gap: 3,
+  },
+  subTitulo: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: UI.texto,
+  },
+  subDesc: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: UI.texto,
+    opacity: 0.75,
+  },
+  barraFondo: {
+    marginTop: 3,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    overflow: 'hidden',
+  },
+  barraRelleno: {
+    height: '100%',
+    borderRadius: 4,
+    backgroundColor: UI.texto,
+  },
+  subProgreso: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: UI.texto,
+    opacity: 0.8,
+  },
+  lista: {
+    gap: Spacing.two,
+    marginTop: Spacing.two,
   },
   tarjeta: {
     flexDirection: 'row',
@@ -143,12 +229,12 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
-  subtemaTitulo: {
+  nivelTitulo: {
     fontSize: 15,
     fontWeight: '800',
     color: UI.texto,
   },
-  subtemaEstado: {
+  nivelEstado: {
     fontSize: 12,
     fontWeight: '700',
     color: UI.textoSuave,

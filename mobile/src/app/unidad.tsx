@@ -6,31 +6,33 @@ import { Button3D } from '@/components/Button3D';
 import { HeaderUnit } from '@/components/HeaderUnit';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { Spacing, UI } from '@/constants/theme';
-import { obtenerUnidad } from '@/data/unidades';
+import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
- * Pantalla ACCIONES DEL SUBTEMA (ex menú de unidad).
- * Se llega desde un subtema: muestra su nombre y los 3 botones 3D
+ * Pantalla ACCIONES DEL NIVEL.
+ * Se llega desde un nivel: muestra su nombre y los 3 botones 3D
  * (Aprender / Experimentar-Jugar / Ejercicios) aplicados a esa lección.
  */
 export default function UnidadScreen() {
-  const params = useLocalSearchParams<{ id?: string; unidad?: string; leccion?: string }>();
-  const unidad = obtenerUnidad(Number(params.unidad ?? params.id ?? 1));
+  const params = useLocalSearchParams<{ unidad?: string; subtema?: string; leccion?: string }>();
+  const unidad = obtenerUnidad(Number(params.unidad ?? 1));
+  const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
 
-  if (!unidad) {
+  if (!unidad || !sub) {
     router.back();
     return null;
   }
 
-  const nivel = unidad.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? unidad.niveles[0];
+  const nivel = sub.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? sub.niveles[0];
+  const leccionId = nivel?.leccionId;
 
   return (
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
-            titulo={nivel ? `Subtema:\n${nivel.nombre}` : `Tema:\n${unidad.nombre}`}
-            subtitulo={unidad.nombre}
+            titulo={nivel ? `Nivel:\n${nivel.nombre}` : `Subtema:\n${sub.nombre}`}
+            subtitulo={sub.nombre}
             mostrarAtras
             variante="simple"
           />
@@ -42,7 +44,9 @@ export default function UnidadScreen() {
               color={UI.naranja}
               colorBorde={UI.naranjaOscuro}
               onPress={() =>
-                router.push({ pathname: '/teoria', params: { unidad: String(unidad.id) } } as any)
+                router.push(
+                  { pathname: '/teoria', params: { unidad: String(unidad.id), subtema: String(sub.id) } } as any,
+                )
               }
               style={styles.boton}
             />
@@ -62,13 +66,15 @@ export default function UnidadScreen() {
               color={UI.verde}
               colorBorde={UI.verdeOscuro}
               onPress={() =>
-                router.push({ pathname: '/niveles', params: { unidad: String(unidad.id) } } as any)
+                router.push(
+                  { pathname: '/niveles', params: { unidad: String(unidad.id), subtema: String(sub.id) } } as any,
+                )
               }
               style={styles.boton}
             />
           </View>
 
-          <RobotSaludo imagen={unidad.mascota} ancho={210} alto={210} style={styles.mascota} />
+          <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </View>

@@ -11,17 +11,13 @@ import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
-import { UNIDADES } from '@/data/unidades';
+import { nombreLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
 const IDIOMA_KEY = '@sphynx/idioma';
 
 function tituloLeccion(id: number) {
-  for (const unidad of UNIDADES) {
-    const nivel = unidad.niveles.find((n) => n.leccionId === id);
-    if (nivel) return nivel.nombre;
-  }
-  return 'Lección';
+  return nombreLeccion(id);
 }
 
 /**

@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
-import { obtenerUnidad } from '@/data/unidades';
+import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
  * Pantalla TEORÍA (mockup "TEORÍA").
@@ -14,11 +14,12 @@ import { obtenerUnidad } from '@/data/unidades';
  * y botón 3D EJERCICIOS que lleva al mapa de niveles.
  */
 export default function TeoriaScreen() {
-  const params = useLocalSearchParams<{ unidad?: string }>();
+  const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
+  const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
   const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
 
-  if (!unidad) {
+  if (!unidad || !sub) {
     router.back();
     return null;
   }
@@ -39,14 +40,14 @@ export default function TeoriaScreen() {
           {/* Tarjeta blanca con ilustración + concepto */}
           <View style={styles.tarjeta}>
             <RobotSaludo
-              imagen={unidad.mascota}
+              imagen={sub.mascota}
               ancho={170}
               alto={170}
               conMarco={false}
             />
-            <Text style={styles.tarjetaTitulo}>{unidad.teoriaTitulo}</Text>
+            <Text style={styles.tarjetaTitulo}>{sub.teoriaTitulo}</Text>
             <Text style={styles.tarjetaTexto}>
-              {idioma === 'es' ? unidad.teoriaTexto : unidad.teoria_jopara}
+              {idioma === 'es' ? sub.teoriaTexto : sub.teoria_jopara}
             </Text>
             <Text style={styles.fuente}>Fuente: Cuadernillo MEC · Física 3er curso</Text>
           </View>
@@ -57,7 +58,9 @@ export default function TeoriaScreen() {
             color={unidad.color}
             colorBorde={unidad.colorOscuro}
             onPress={() =>
-              router.push({ pathname: '/niveles', params: { unidad: String(unidad.id) } } as any)
+              router.push(
+                { pathname: '/niveles', params: { unidad: String(unidad.id), subtema: String(sub.id) } } as any,
+              )
             }
             style={styles.boton}
           />
