@@ -29,7 +29,7 @@ PREGUNTAS_FISICA = [
         "leccion_id": 101,
         "tema": "Período y frecuencia",
         "pregunta_es": "Un ventilador de techo gira a razón de 240 rpm. ¿Cuál es su período?",
-        "pregunta_jopara": "Ventilador ohyvy 240 rpm. Mboy período?",
+        "pregunta_jopara": "Ventilador ojere 240 rpm. Mboy período?",
         "opciones": ["0.25 s", "4 s", "240 s", "0.04 s"],
         "respuesta_correcta": "0.25 s",
         "explicacion_jopara": "f = 240/60 = 4 Hz; T = 1/4 = 0,25 s."
@@ -59,7 +59,7 @@ PREGUNTAS_FISICA = [
         "leccion_id": 102,
         "tema": "Velocidad angular",
         "pregunta_es": "Un móvil gira con velocidad angular media de 10 rad/s. ¿Qué ángulo describe en 5 s?",
-        "pregunta_jopara": "Peteĩ mba’e ohyvy 10 rad/s-pe. Mboy ángulo 5 s-pe?",
+        "pregunta_jopara": "Peteĩ mba’e ojere 10 rad/s-pe. Mboy ángulo 5 s-pe?",
         "opciones": ["50 rad", "2 rad", "15 rad", "5 rad"],
         "respuesta_correcta": "50 rad",
         "explicacion_jopara": "θ = ω · t = 10 · 5 = 50 rad."
@@ -149,7 +149,7 @@ PREGUNTAS_FISICA = [
         "leccion_id": 103,
         "tema": "Velocidad tangencial",
         "pregunta_es": "¿Cuál es la velocidad tangencial justo en el centro de una rueda que gira?",
-        "pregunta_jopara": "Mboy velocidad centro de la rueda-pe?",
+        "pregunta_jopara": "Mboy velocidad centro-pe?",
         "opciones": ["0 m/s", "Igual que en el borde", "La mitad que en el borde", "El doble que en el borde"],
         "respuesta_correcta": "0 m/s",
         "explicacion_jopara": "Centro-pe R = 0 → v = ω·0 = 0."
@@ -344,7 +344,7 @@ PREGUNTAS_FISICA = [
         "leccion_id": 203,
         "tema": "Elementos de la lente",
         "pregunta_es": "¿Cuál de estas lentes NO es convergente?",
-        "pregunta_jopara": "Máva lente NDaha’éi convergente?",
+        "pregunta_jopara": "Máva lente ndaha’éi convergente?",
         "opciones": ["Bicóncava", "Biconvexa", "Plano-convexa", "Menisco convergente"],
         "respuesta_correcta": "Bicóncava",
         "explicacion_jopara": "Bicóncava ha’e divergente (delgada centro-pe)."

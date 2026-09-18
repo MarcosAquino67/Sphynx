@@ -108,7 +108,7 @@ export default function SubtemasScreen() {
                           {estado === 'completado'
                             ? '✅ Completado'
                             : estado === 'activo'
-                              ? '▶ ¡Te toca este!'
+                              ? '▶ ¡Nde turno!'
                               : '🔒 Bloqueado'}
                         </Text>
                       </View>

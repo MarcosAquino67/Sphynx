@@ -27,8 +27,8 @@ export default function ProgresoScreen() {
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          <Text style={styles.titulo}>Tu Progreso</Text>
-          <Text style={styles.subtitulo}>Petetĩ ára haipytereíva, petetĩ jehupity</Text>
+          <Text style={styles.titulo}>Nde progreso</Text>
+          <Text style={styles.subtitulo}>Peteĩ ára de racha, peteĩ logro jahupyty</Text>
 
           {/* Tarjeta de racha */}
           <View style={styles.tarjeta}>

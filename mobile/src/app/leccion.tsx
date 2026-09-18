@@ -11,7 +11,7 @@ import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
-import { nombreLeccion } from '@/data/unidades';
+import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
 const IDIOMA_KEY = '@sphynx/idioma';
@@ -83,7 +83,7 @@ export default function LeccionScreen() {
           <View style={styles.bannerFila}>
             <View style={styles.banner}>
               <Text style={styles.bannerTexto}>
-                Lección {leccionId}: {titulo}
+                Nivel {numeroLeccion(leccionId)}: {titulo}
               </Text>
             </View>
             <Pressable
@@ -136,7 +136,7 @@ export default function LeccionScreen() {
           {respondio && (
             <View style={styles.feedback}>
               <Text style={styles.feedbackTitulo}>
-                {esCorrecta ? '✅ ¡Iporã! Correcto' : '❌ Error... ¡Eñemoarandu!'}
+                {esCorrecta ? '✅ ¡Iporã! Correcto' : '❌ Ndaha’éi... ¡Probá jey!'}
               </Text>
               <Text style={styles.feedbackTexto}>{pregunta.explicacion_jopara}</Text>
               <Button3D

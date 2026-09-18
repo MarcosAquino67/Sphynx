@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Ellipse, Line, Marker, Path } from 'react-native-svg';
 
@@ -69,6 +69,14 @@ export function SimuladorLentes() {
   const [idxDesafio, setIdxDesafio] = useState(0);
   const [mensaje, setMensaje] = useState('');
   const [ganados, setGanados] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Limpia el avance automático si se sale de la pantalla
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const objRef = useRef(objX);
   const lensRef = useRef(lensX);
@@ -156,7 +164,13 @@ export function SimuladorLentes() {
     }
     if (desafio.check({ di, m, inf: infinito })) {
       setGanados((g) => g + 1);
-      setMensaje('🎉 ¡Desafío logrado! ¡Iporã!');
+      setMensaje('🎉 ¡Desafío logrado! ¡Iporã! Pasando al siguiente...');
+      // Avanza solo al siguiente desafío tras festejarlo
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        setIdxDesafio((i) => (i + 1) % DESAFIOS.length);
+        setMensaje('');
+      }, 1800);
     } else {
       setMensaje('❌ Todavía no... ¡Probá otra vez!');
     }
@@ -304,8 +318,8 @@ export function SimuladorLentes() {
           colorBorde={UI.verdeOscuro}
           onPress={comprobar}
         />
-        <Pressable onPress={otroDesafio}>
-          <Text style={styles.otroBtn}>🔀 Otro desafío</Text>
+        <Pressable onPress={otroDesafio} style={({ pressed }) => [styles.otroBtn, pressed && styles.otroBtnPresionado]}>
+          <Text style={styles.otroBtnTexto}>🔀 Cambiar de desafío</Text>
         </Pressable>
         {mensaje !== '' && <Text style={styles.mensaje}>{mensaje}</Text>}
         <Text style={styles.ganados}>🏆 Desafíos logrados: {ganados}</Text>
@@ -414,7 +428,20 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   otroBtn: {
-    fontSize: 13,
+    width: '100%',
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.azul,
+    borderBottomWidth: 5,
+    borderRadius: 14,
+    paddingVertical: Spacing.two,
+    alignItems: 'center',
+  },
+  otroBtnPresionado: {
+    opacity: 0.8,
+  },
+  otroBtnTexto: {
+    fontSize: 14,
     fontWeight: '800',
     color: UI.azulOscuro,
   },

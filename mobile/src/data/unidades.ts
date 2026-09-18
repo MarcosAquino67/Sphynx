@@ -85,7 +85,7 @@ export const UNIDADES: Unidad[] = [
           'Velocidad angular ω = ángulo/tiempo (rad/s), tangencial v = ω·R (m/s) y la ' +
           'aceleración centrípeta apunta siempre al centro (ac = v²/R = ω²·R).',
         teoria_jopara:
-          'MCU ha’e movimiento circular pya’e constante-reheve. Período (T) ha’e tiempo ' +
+          'MCU ha’e movimiento circular pya’e constante reheve. Período (T) ha’e tiempo ' +
           'peteĩ vuelta-pe, frecuencia (f) vueltas 1 s-pe. Velocidad angular ω = ángulo/tiempo, ' +
           'tangencial v = ω·R, ha aceleración centrípeta ohecha centro-pe (ac = v²/R).',
         niveles: [
@@ -194,4 +194,15 @@ export function nombreLeccion(leccionId: number): string {
     }
   }
   return 'Lección';
+}
+
+/** Busca el número visible (Niv. N) de una lección para mostrar en pantalla. */
+export function numeroLeccion(leccionId: number): number {
+  for (const unidad of UNIDADES) {
+    for (const sub of unidad.subtemas) {
+      const nivel = sub.niveles.find((n) => n.leccionId === leccionId);
+      if (nivel) return nivel.n;
+    }
+  }
+  return leccionId;
 }

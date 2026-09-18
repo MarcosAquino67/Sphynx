@@ -110,7 +110,7 @@ export default function PerfilScreen() {
                 style={styles.avatar}
               />
               <Text style={styles.nombre}>{nombre}</Text>
-              <Text style={styles.sub}>Oñeha&apos;ã ha oikuaave cada día</Text>
+              <Text style={styles.sub}>Cada día, peteĩ logro pyahu</Text>
 
               <View style={styles.stats}>
                 <View style={styles.statItem}>
