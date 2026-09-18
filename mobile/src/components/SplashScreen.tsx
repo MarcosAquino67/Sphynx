@@ -1,89 +1,68 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import * as NativeSplash from 'expo-splash-screen';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withSequence,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
 
-import { MascotContainer } from '@/components/MascotContainer';
 import { Spacing, UI } from '@/constants/theme';
 
+// Tiempos de la barra (ms): llena hasta 67%, espera, y completa hasta 100%
+const T_LLENA_67 = 1300;
+const T_ESPERA_67 = 1000;
+const T_COMPLETA = 700;
+
 type Props = {
-  /** Se llama cuando termina la animación (~3.2s) para mostrar la app. */
+  /** Se llama al llegar a 100% para pasar a la presentación. */
   onFinish: () => void;
 };
 
 /**
- * Splash de bienvenida animado (Sphynx + robot saludando).
- * 1. El título entra con fade + caída suave.
- * 2. El robot aparece con rebote elástico.
- * 3. El robot se inclina de lado a lado simulando el saludo.
- * 4. A los ~3.2s llama a `onFinish` para entrar a la app.
+ * Pantalla de carga inicial: logo Sphynx sobre negro + barra de
+ * progreso (1→67% en ~1.3s, pausa 1s en 67%, 67→100% y avanza).
  */
 export function SplashScreen({ onFinish }: Props) {
-  const titleOpacity = useSharedValue(0);
-  const titleTranslateY = useSharedValue(-30);
-  const robotScale = useSharedValue(0);
-  const robotRotation = useSharedValue(0);
+  const [progreso, setProgreso] = useState(1);
 
   useEffect(() => {
-    // 1. Entrada del título "Sphynx" (fade in + caída suave)
-    titleOpacity.value = withTiming(1, { duration: 800 });
-    titleTranslateY.value = withSpring(0, { damping: 10 });
-
-    // 2. Entrada del robot (rebote elástico con retardo)
-    robotScale.value = withDelay(400, withSpring(1, { damping: 8, stiffness: 90 }));
-
-    // 3. Saludo del robot (giro de lado a lado)
-    robotRotation.value = withDelay(
-      900,
-      withSequence(
-        withTiming(-12, { duration: 150 }),
-        withTiming(12, { duration: 150 }),
-        withTiming(-12, { duration: 150 }),
-        withTiming(0, { duration: 150 }),
-      ),
-    );
-
-    // 4. Terminar el splash y pasar a la app principal
-    const timer = setTimeout(onFinish, 3200);
-    return () => clearTimeout(timer);
+    const inicio = Date.now();
+    const id = setInterval(() => {
+      const t = Date.now() - inicio;
+      let p: number;
+      if (t < T_LLENA_67) {
+        p = 1 + (66 * t) / T_LLENA_67;
+      } else if (t < T_LLENA_67 + T_ESPERA_67) {
+        p = 67;
+      } else if (t < T_LLENA_67 + T_ESPERA_67 + T_COMPLETA) {
+        p = 67 + (33 * (t - T_LLENA_67 - T_ESPERA_67)) / T_COMPLETA;
+      } else {
+        p = 100;
+      }
+      setProgreso(Math.min(100, Math.round(p)));
+      if (p >= 100) {
+        clearInterval(id);
+        setTimeout(onFinish, 250);
+      }
+    }, 50);
+    return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const titleStyle = useAnimatedStyle(() => ({
-    opacity: titleOpacity.value,
-    transform: [{ translateY: titleTranslateY.value }],
-  }));
-
-  const robotStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: robotScale.value }, { rotate: `${robotRotation.value}deg` }],
-  }));
 
   return (
     <View
       style={styles.container}
       onLayout={() => {
-        // Oculta el splash nativo en cuanto se pinta el nuestro
+        // Oculta el splash nativo en cuanto se pinta la carga
         NativeSplash.hideAsync().catch(() => {});
       }}>
-      <Animated.View style={[styles.titleContainer, titleStyle]}>
-        <Text style={styles.appName}>Sphynx</Text>
-        <Text style={styles.appTagline}>Física interactiva</Text>
-      </Animated.View>
+      <Image
+        source={require('@/assets/SPHYNX_png.png')}
+        style={styles.logo}
+        contentFit="contain"
+      />
 
-      <Animated.View style={[styles.robotContainer, robotStyle]}>
-        <MascotContainer
-          imagen={require('@/assets/mascotas/robot.png')}
-          ancho={210}
-          alto={210}
-        />
-      </Animated.View>
+      <View style={styles.barraFondo}>
+        <View style={[styles.barraRelleno, { width: `${progreso}%` }]} />
+      </View>
+      <Text style={styles.porcentaje}>{progreso}%</Text>
     </View>
   );
 }
@@ -95,31 +74,34 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: UI.fondoVerde,
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.four,
     zIndex: 1000,
     elevation: 1000,
   },
-  titleContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.five,
+  logo: {
+    width: 280,
+    height: 280,
   },
-  appName: {
-    fontSize: 52,
-    fontWeight: '900',
-    color: UI.azul,
-    letterSpacing: 2,
+  barraFondo: {
+    marginTop: Spacing.five,
+    width: '70%',
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#333333',
+    overflow: 'hidden',
   },
-  appTagline: {
+  barraRelleno: {
+    height: '100%',
+    borderRadius: 6,
+    backgroundColor: UI.azul,
+  },
+  porcentaje: {
+    marginTop: Spacing.two,
     fontSize: 16,
-    color: UI.textoSuave,
-    marginTop: 6,
-    fontWeight: '700',
-  },
-  robotContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

@@ -20,7 +20,7 @@ const TABS: Tab[] = [
 ];
 
 /** Rutas de detalle donde la barra se oculta (pantallas con botón Atrás). */
-const RUTAS_OCULTAS = ['/unidad', '/subtemas', '/niveles', '/teoria', '/leccion', '/experimento', '/creditos'];
+const RUTAS_OCULTAS = ['/unidad', '/subtemas', '/niveles', '/teoria', '/leccion', '/experimento', '/creditos', '/bienvenida'];
 
 /**
  * Barra de navegación inferior fija con iconos vectoriales.

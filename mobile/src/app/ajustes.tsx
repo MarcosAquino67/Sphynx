@@ -81,6 +81,19 @@ export default function AjustesScreen() {
           </View>
 
           <Pressable
+            onPress={() => router.push('/bienvenida' as any)}
+            style={({ pressed }) => [styles.creditos, pressed && styles.creditosPresionado]}>
+            <View style={styles.iconoFondo}>
+              <MaterialCommunityIcons name="play" size={24} color={UI.azul} />
+            </View>
+            <View style={styles.textos}>
+              <Text style={styles.filaTitulo}>Ver presentación</Text>
+              <Text style={styles.filaDesc}>Bienvenida del robot de nuevo</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={UI.textoSuave} />
+          </Pressable>
+
+          <Pressable
             onPress={() => router.push('/creditos' as any)}
             style={({ pressed }) => [styles.creditos, pressed && styles.creditosPresionado]}>
             <View style={styles.iconoFondo}>
