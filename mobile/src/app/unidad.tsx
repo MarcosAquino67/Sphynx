@@ -9,28 +9,28 @@ import { Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad } from '@/data/unidades';
 
 /**
- * Pantalla UNIDAD TEMÁTICA (mockup "Tema: X").
- * Cabecera simple, 3 botones 3D (Aprender / Experimentar-Jugar / Ejercicios)
- * y la mascota de la unidad.
+ * Pantalla ACCIONES DEL SUBTEMA (ex menú de unidad).
+ * Se llega desde un subtema: muestra su nombre y los 3 botones 3D
+ * (Aprender / Experimentar-Jugar / Ejercicios) aplicados a esa lección.
  */
 export default function UnidadScreen() {
-  const params = useLocalSearchParams<{ id?: string }>();
-  const unidad = obtenerUnidad(Number(params.id ?? 1));
+  const params = useLocalSearchParams<{ id?: string; unidad?: string; leccion?: string }>();
+  const unidad = obtenerUnidad(Number(params.unidad ?? params.id ?? 1));
 
   if (!unidad) {
     router.back();
     return null;
   }
 
-  const primeraLeccion = unidad.niveles[0]?.leccionId;
+  const nivel = unidad.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? unidad.niveles[0];
 
   return (
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
-            titulo={`Tema:\n${unidad.nombre}`}
-            subtitulo={unidad.descripcion_jopara}
+            titulo={nivel ? `Subtema:\n${nivel.nombre}` : `Tema:\n${unidad.nombre}`}
+            subtitulo={unidad.nombre}
             mostrarAtras
             variante="simple"
           />
@@ -52,8 +52,7 @@ export default function UnidadScreen() {
               color={UI.azul}
               colorBorde={UI.azulOscuro}
               onPress={() =>
-                primeraLeccion !== undefined &&
-                router.push({ pathname: '/leccion', params: { id: String(primeraLeccion) } } as any)
+                router.push({ pathname: '/experimento', params: { unidad: String(unidad.id) } } as any)
               }
               style={styles.boton}
             />

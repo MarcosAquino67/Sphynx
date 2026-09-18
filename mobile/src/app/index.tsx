@@ -18,7 +18,7 @@ export default function InicioScreen() {
       Alert.alert('Próximamente', `"${unidad.nombre}" estará disponible muy pronto.`);
       return;
     }
-    router.push({ pathname: '/unidad', params: { id: String(unidad.id) } } as any);
+    router.push({ pathname: '/subtemas', params: { unidad: String(unidad.id) } } as any);
   };
 
   return (

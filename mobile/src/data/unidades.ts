@@ -41,9 +41,10 @@ export type Unidad = {
 
 /**
  * Temas oficiales del proyecto (cuadernillos MEC 3er curso):
- * - Movimiento Circular Uniforme (FIS_PE_3_E_03may07)
- * - Lentes / Óptica (FIS_PC_3_E_31may04jun)
- * Los demás temas quedan como "Próximamente".
+ * - Unidad 1: Movimiento Circular (Mecánica/Cinemática)
+ * - Unidad 2: Lentes (Óptica)
+ * Son dos ramas distintas de la física. Los demás temas quedan
+ * como "Próximamente".
  */
 export const UNIDADES: Unidad[] = [
   {

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
@@ -78,6 +79,19 @@ export default function AjustesScreen() {
               control={<Switch value={sonido} onValueChange={cambiarSonido} />}
             />
           </View>
+
+          <Pressable
+            onPress={() => router.push('/creditos' as any)}
+            style={({ pressed }) => [styles.creditos, pressed && styles.creditosPresionado]}>
+            <View style={styles.iconoFondo}>
+              <MaterialCommunityIcons name="information" size={24} color={UI.azul} />
+            </View>
+            <View style={styles.textos}>
+              <Text style={styles.filaTitulo}>Créditos y referencias</Text>
+              <Text style={styles.filaDesc}>Fuentes, licencias y atribuciones</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={UI.textoSuave} />
+          </Pressable>
 
           <Button3D
             titulo="Borrar progreso"
@@ -180,6 +194,24 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: UI.bordeTarjeta,
     marginVertical: Spacing.two,
+  },
+  creditos: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    backgroundColor: UI.tarjeta,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    padding: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  creditosPresionado: {
+    opacity: 0.8,
   },
   boton: {
     width: '100%',

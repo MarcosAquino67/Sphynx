@@ -48,6 +48,7 @@ export default function TeoriaScreen() {
             <Text style={styles.tarjetaTexto}>
               {idioma === 'es' ? unidad.teoriaTexto : unidad.teoria_jopara}
             </Text>
+            <Text style={styles.fuente}>Fuente: Cuadernillo MEC · Física 3er curso</Text>
           </View>
 
           <Button3D
@@ -130,6 +131,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 23,
     color: UI.texto,
+    textAlign: 'center',
+  },
+  fuente: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: UI.textoSuave,
     textAlign: 'center',
   },
   boton: {
