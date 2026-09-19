@@ -119,7 +119,7 @@ export default function PerfilScreen() {
 
               <Text style={styles.rotulo}>Foto de perfil</Text>
               <View style={styles.previewWrap}>
-                <Image source={borradorSource} style={styles.preview} contentFit="cover" />
+                <Image source={borradorSource} style={styles.preview} contentFit="contain" />
               </View>
 
               <Button3D
@@ -164,7 +164,7 @@ export default function PerfilScreen() {
           ) : (
             <>
               <View style={styles.avatarFondo}>
-                <Image source={avatarSource} style={styles.avatar} contentFit="cover" />
+                <Image source={avatarSource} style={styles.avatar} contentFit="contain" />
               </View>
               <Text style={styles.nombre}>{nombre}</Text>
               <Text style={styles.sub}>Cada día, peteĩ logro pyahu</Text>
