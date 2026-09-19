@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Ellipse, Line, Marker, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, Ellipse, Line, Marker, Path } from 'react-native-svg';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { Button3D } from '@/components/Button3D';
@@ -136,7 +136,7 @@ export function SimuladorLentes() {
   const fPx = f * PX_POR_CM;
   const Fcerca = { x: lensX - fPx, y: EJE_Y }; // foco lado objeto (|f|)
   const Flejos = { x: lensX + fPx, y: EJE_Y }; // foco lado imagen (|f|)
-  const finX = 395; // hasta dónde se dibujan los rayos refractados
+  const finX = 382; // hasta dónde se dibujan los rayos refractados (con margen para el marcador)
   const imgTopY = EJE_Y - m * OBJ_H_CM * PX_POR_CM;
   const verImagen = !infinito && ix > -10 && ix < 410;
 
@@ -191,15 +191,17 @@ export function SimuladorLentes() {
         onLayout={(e) => setAncho(e.nativeEvent.layout.width)}
         {...pan.panHandlers}>
         <Svg width="100%" height={230} viewBox={`0 0 ${VB_W} ${VB_H}`}>
-          <Marker id="mR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill="#E74C3C" />
-          </Marker>
-          <Marker id="mV" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill="#2ECC71" />
-          </Marker>
-          <Marker id="mA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill="#F5A623" />
-          </Marker>
+          <Defs>
+            <Marker id="mR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill="#E74C3C" />
+            </Marker>
+            <Marker id="mV" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill="#2ECC71" />
+            </Marker>
+            <Marker id="mA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill="#F5A623" />
+            </Marker>
+          </Defs>
 
           {/* Eje principal */}
           <Line x1={8} y1={EJE_Y} x2={392} y2={EJE_Y} stroke={UI.textoSuave} strokeWidth={1.5} />

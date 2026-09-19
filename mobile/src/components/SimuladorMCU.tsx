@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Line, Marker, Path } from 'react-native-svg';
+import Svg, { Circle, Defs, Line, Marker, Path } from 'react-native-svg';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { Stepper } from '@/components/Stepper';
 
 const CX = 150;
-const CY = 132;
-const PX_POR_M = 10.5; // escala del radio
+const CY = 140;
+const PX_POR_M = 8.2; // escala del radio (reducida para que nada salga del cuadro)
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
@@ -69,9 +69,9 @@ export function SimuladorMCU() {
   // Dirección tangente (sentido del giro) y vector velocidad
   const tx = -Math.sin(angulo);
   const ty = Math.cos(angulo);
-  const vLen = Math.min(70, v * 3);
+  const vLen = Math.min(45, v * 2.2);
   // Aceleración centrípeta: hacia el centro
-  const acLen = Math.min(60, ac * 1.2);
+  const acLen = Math.min(38, ac * 1);
   const acx = CX - px;
   const acy = CY - py;
   const acNorm = Math.hypot(acx, acy) || 1;
@@ -104,16 +104,18 @@ export function SimuladorMCU() {
       <Text style={styles.titulo}>🌀 Laboratorio circular</Text>
 
       <View style={styles.lienzo}>
-        <Svg width="100%" height={250} viewBox="0 0 300 264">
-          <Marker id="mAzul" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill={UI.azulOscuro} />
-          </Marker>
-          <Marker id="mVerde" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill="#2ECC71" />
-          </Marker>
-          <Marker id="mRojo" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <Path d="M0,0 L6,3 L0,6 z" fill="#E74C3C" />
-          </Marker>
+        <Svg width="100%" height={260} viewBox="0 0 300 280">
+          <Defs>
+            <Marker id="mAzul" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill={UI.azulOscuro} />
+            </Marker>
+            <Marker id="mVerde" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill="#2ECC71" />
+            </Marker>
+            <Marker id="mRojo" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <Path d="M0,0 L6,3 L0,6 z" fill="#E74C3C" />
+            </Marker>
+          </Defs>
 
           {/* Trayectoria */}
           <Circle cx={CX} cy={CY} r={rPx} fill="none" stroke={UI.textoSuave} strokeWidth={1.5} strokeDasharray="7,5" />
