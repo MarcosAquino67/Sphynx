@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 
@@ -21,16 +22,17 @@ type Props = {
  * - 'simple': enlace atrás + título centrado ("Tema: X").
  */
 export function HeaderUnit({ titulo, subtitulo, variante = 'tarjeta', mostrarAtras = false }: Props) {
+  const insets = useSafeAreaInsets();
+  const topPad = Math.max(insets.top, 8);
+
   if (variante === 'simple') {
     return (
-      <View style={styles.simpleWrap}>
-        {mostrarAtras ? (
-          <Pressable onPress={() => router.back()} style={styles.atras}>
-            <MaterialCommunityIcons name="chevron-left" size={22} color={UI.azul} />
+      <View style={[styles.simpleWrap, { width: '100%', paddingTop: topPad + Spacing.two }]}>
+        {mostrarAtras && (
+          <Pressable onPress={() => router.back()} style={[styles.atras, { alignSelf: 'flex-start', marginBottom: Spacing.two }]}>
+            <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
             <Text style={styles.atrasTexto}>Atrás</Text>
           </Pressable>
-        ) : (
-          <View style={styles.atras} />
         )}
         <Text style={styles.simpleTitulo}>{titulo}</Text>
         {subtitulo ? <Text style={styles.simpleSubtitulo}>{subtitulo}</Text> : null}
@@ -39,10 +41,10 @@ export function HeaderUnit({ titulo, subtitulo, variante = 'tarjeta', mostrarAtr
   }
 
   return (
-    <View>
+    <View style={{ width: '100%', paddingTop: mostrarAtras ? topPad : 0 }}>
       {mostrarAtras && (
         <Pressable onPress={() => router.back()} style={[styles.atras, styles.atrasMargen]}>
-          <MaterialCommunityIcons name="chevron-left" size={22} color={UI.azul} />
+          <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
           <Text style={styles.atrasTexto}>Atrás</Text>
         </Pressable>
       )}
@@ -85,8 +87,8 @@ const styles = StyleSheet.create({
   },
   // --- Variante simple ---
   simpleWrap: {
+    width: '100%',
     alignItems: 'center',
-    paddingTop: Spacing.two,
   },
   simpleTitulo: {
     fontSize: 24,
@@ -100,19 +102,25 @@ const styles = StyleSheet.create({
     color: UI.textoSuave,
     textAlign: 'center',
   },
-  // --- Enlace atrás ---
+  // --- Enlace atrás (botón rojo en esquina) ---
   atras: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    paddingVertical: 4,
+    backgroundColor: UI.rojo,
+    borderWidth: 2,
+    borderColor: UI.rojoOscuro,
+    borderBottomWidth: 4,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   atrasMargen: {
     marginBottom: Spacing.two,
   },
   atrasTexto: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: UI.azul,
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

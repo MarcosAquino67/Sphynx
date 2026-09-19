@@ -1,40 +1,54 @@
 import { useCallback, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
-import { MascotContainer } from '@/components/MascotContainer';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
+import { obtenerEstadisticas, type Estadisticas } from '@/storage/estadisticas';
 import {
   AVATARES,
   guardarAvatar,
+  guardarFoto,
   guardarNombre,
   obtenerAvatar,
+  obtenerFoto,
   obtenerNombre,
   type AvatarKey,
 } from '@/storage/perfil';
 
 /**
- * Pantalla PERFIL: avatar, nombre y estadísticas.
- * Con "Editar perfil" se puede cambiar el nombre (TextInput) y la
- * foto (galería de mascotas, sin permisos). Todo en AsyncStorage.
+ * Pantalla PERFIL: avatar (mascota o foto del dispositivo),
+ * nombre y estadísticas dinámicas (racha, XP, aciertos).
+ * Todo con edición offline en AsyncStorage.
  */
 export default function PerfilScreen() {
   const { streak } = useUserProgress();
 
   const [nombre, setNombre] = useState('Estudiante');
   const [avatar, setAvatar] = useState<AvatarKey>('gato-saludo');
+  const [foto, setFoto] = useState<string | null>(null);
+  const [stats, setStats] = useState<Estadisticas>({ xp: 0, aciertos: 0, intentos: 0 });
   const [editando, setEditando] = useState(false);
   const [borradorNombre, setBorradorNombre] = useState('');
   const [borradorAvatar, setBorradorAvatar] = useState<AvatarKey>('gato-saludo');
+  const [borradorFoto, setBorradorFoto] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    setNombre(await obtenerNombre());
-    setAvatar(await obtenerAvatar());
+    const [n, a, f, s] = await Promise.all([
+      obtenerNombre(),
+      obtenerAvatar(),
+      obtenerFoto(),
+      obtenerEstadisticas(),
+    ]);
+    setNombre(n);
+    setAvatar(a);
+    setFoto(f);
+    setStats(s);
   }, []);
 
   useFocusEffect(
@@ -46,16 +60,45 @@ export default function PerfilScreen() {
   const empezarEdicion = () => {
     setBorradorNombre(nombre);
     setBorradorAvatar(avatar);
+    setBorradorFoto(foto);
     setEditando(true);
+  };
+
+  const elegirFoto = async () => {
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert('Permiso denegado', 'Necesitamos acceso a tus fotos para cambiar el avatar.');
+      return;
+    }
+    const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!res.canceled) {
+      setBorradorFoto(res.assets[0].uri);
+    }
   };
 
   const guardar = async () => {
     await guardarNombre(borradorNombre);
-    await guardarAvatar(borradorAvatar);
+    if (borradorFoto) {
+      await guardarFoto(borradorFoto);
+    } else {
+      await guardarAvatar(borradorAvatar);
+      // Si había foto custom y ahora elige mascota, borrar custom
+      const { borrarFoto } = await import('@/storage/perfil');
+      await borrarFoto();
+    }
     await cargar();
     setEditando(false);
     Alert.alert('Perfil actualizado', '¡Listo! Tu perfil quedó guardado.');
   };
+
+  const avatarSource = foto ? { uri: foto } : AVATARES[avatar];
+  const borradorSource = borradorFoto ? { uri: borradorFoto } : AVATARES[borradorAvatar];
+  const precision = stats.intentos === 0 ? 0 : Math.round((stats.aciertos / stats.intentos) * 100);
 
   return (
     <View style={styles.fondo}>
@@ -75,14 +118,31 @@ export default function PerfilScreen() {
               />
 
               <Text style={styles.rotulo}>Foto de perfil</Text>
+              <View style={styles.previewWrap}>
+                <Image source={borradorSource} style={styles.preview} contentFit="cover" />
+              </View>
+
+              <Button3D
+                titulo="Elegir foto del dispositivo"
+                icono="image"
+                color={UI.azul}
+                colorBorde={UI.azulOscuro}
+                onPress={elegirFoto}
+                style={styles.boton}
+              />
+
+              <Text style={styles.rotulo}>O elegí una mascota</Text>
               <View style={styles.galeria}>
                 {(Object.keys(AVATARES) as AvatarKey[]).map((key) => (
                   <Pressable
                     key={key}
-                    onPress={() => setBorradorAvatar(key)}
+                    onPress={() => {
+                      setBorradorAvatar(key);
+                      setBorradorFoto(null);
+                    }}
                     style={[
                       styles.avatarOpcion,
-                      borradorAvatar === key && styles.avatarSeleccionado,
+                      !borradorFoto && borradorAvatar === key && styles.avatarSeleccionado,
                     ]}>
                     <Image source={AVATARES[key]} style={styles.avatarMini} contentFit="contain" />
                   </Pressable>
@@ -103,12 +163,9 @@ export default function PerfilScreen() {
             </>
           ) : (
             <>
-              <MascotContainer
-                imagen={AVATARES[avatar]}
-                ancho={150}
-                alto={150}
-                style={styles.avatar}
-              />
+              <View style={styles.avatarFondo}>
+                <Image source={avatarSource} style={styles.avatar} contentFit="cover" />
+              </View>
               <Text style={styles.nombre}>{nombre}</Text>
               <Text style={styles.sub}>Cada día, peteĩ logro pyahu</Text>
 
@@ -120,8 +177,15 @@ export default function PerfilScreen() {
                 </View>
                 <View style={styles.statItem}>
                   <MaterialCommunityIcons name="star" size={26} color={UI.estrella} />
-                  <Text style={styles.statValor}>380</Text>
+                  <Text style={styles.statValor}>{stats.xp}</Text>
                   <Text style={styles.statEtiqueta}>XP Total</Text>
+                </View>
+                <View style={styles.statItem}>
+                  <MaterialCommunityIcons name="target" size={26} color={UI.verde} />
+                  <Text style={styles.statValor}>
+                    {stats.aciertos}/{stats.intentos}
+                  </Text>
+                  <Text style={styles.statEtiqueta}>{precision}% aciertos</Text>
                 </View>
               </View>
 
@@ -155,8 +219,18 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.four,
     paddingBottom: Spacing.four,
   },
-  avatar: {
+  avatarFondo: {
+    width: 150,
+    height: 150,
     borderRadius: 75,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    overflow: 'hidden',
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
   },
   nombre: {
     marginTop: Spacing.two,
@@ -193,20 +267,20 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statValor: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: UI.texto,
   },
   statEtiqueta: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     color: UI.textoSuave,
+    textAlign: 'center',
   },
   boton: {
     width: '100%',
     marginTop: Spacing.four,
   },
-  // --- Modo edición ---
   tituloEdicion: {
     fontSize: 22,
     fontWeight: '900',
@@ -231,6 +305,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: UI.texto,
+  },
+  previewWrap: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    overflow: 'hidden',
+  },
+  preview: {
+    width: '100%',
+    height: '100%',
   },
   galeria: {
     flexDirection: 'row',

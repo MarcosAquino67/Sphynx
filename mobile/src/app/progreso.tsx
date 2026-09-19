@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
+import { obtenerEstadisticas, type Estadisticas } from '@/storage/estadisticas';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 /**
@@ -16,10 +17,12 @@ import { obtenerCompletadas } from '@/storage/progreso';
 export default function ProgresoScreen() {
   const { streak } = useUserProgress();
   const [completadas, setCompletadas] = useState<number[]>([]);
+  const [stats, setStats] = useState<Estadisticas>({ xp: 0, aciertos: 0, intentos: 0 });
 
   useFocusEffect(
     useCallback(() => {
       obtenerCompletadas().then(setCompletadas);
+      obtenerEstadisticas().then(setStats);
     }, []),
   );
 
@@ -35,6 +38,16 @@ export default function ProgresoScreen() {
             <MaterialCommunityIcons name="fire" size={54} color={UI.naranja} />
             <Text style={styles.numeroGrande}>{streak}</Text>
             <Text style={styles.etiqueta}>días de racha</Text>
+          </View>
+
+          {/* Tarjeta de XP */}
+          <View style={styles.tarjeta}>
+            <MaterialCommunityIcons name="star" size={40} color={UI.estrella} />
+            <Text style={styles.numeroGrande}>{stats.xp}</Text>
+            <Text style={styles.etiqueta}>XP total (+10 por acierto)</Text>
+            <Text style={styles.detalle}>
+              {stats.aciertos} aciertos / {stats.intentos} intentos
+            </Text>
           </View>
 
           {/* Tarjeta de lecciones */}
@@ -106,6 +119,11 @@ const styles = StyleSheet.create({
   etiqueta: {
     fontSize: 13,
     fontWeight: '700',
+    color: UI.textoSuave,
+  },
+  detalle: {
+    fontSize: 12,
+    fontWeight: '600',
     color: UI.textoSuave,
   },
   boton: {

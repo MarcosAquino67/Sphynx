@@ -100,7 +100,7 @@ export default function NivelesScreen() {
         {/* Cabecera: pills Ejercicios + TEMA + atrás */}
         <View style={styles.cabecera}>
           <Pressable onPress={() => router.back()} style={styles.atras}>
-            <MaterialCommunityIcons name="chevron-left" size={24} color={UI.texto} />
+            <MaterialCommunityIcons name="chevron-left" size={24} color="#FFFFFF" />
           </Pressable>
           <View style={styles.pildora}>
             <Text style={styles.pildoraTexto}>Ejercicios</Text>
@@ -182,12 +182,13 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
   },
   atras: {
-    width: 36,
+    width: 44,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: UI.tarjeta,
+    borderRadius: 12,
+    backgroundColor: UI.rojo,
     borderWidth: 2,
-    borderColor: UI.bordeTarjeta,
+    borderColor: UI.rojoOscuro,
+    borderBottomWidth: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

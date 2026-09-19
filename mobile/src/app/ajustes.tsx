@@ -9,6 +9,7 @@ import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
 import { borrarProgresoLecciones } from '@/storage/progreso';
+import { borrarEstadisticas } from '@/storage/estadisticas';
 
 const IDIOMA_KEY = '@sphynx/idioma';
 const SONIDO_KEY = '@sphynx/sonido';
@@ -50,7 +51,7 @@ export default function AjustesScreen() {
           text: 'Borrar',
           style: 'destructive',
           onPress: async () => {
-            await borrarProgresoLecciones();
+            await Promise.all([borrarProgresoLecciones(), borrarEstadisticas()]);
             Alert.alert('Listo', 'Progreso borrado. ¡A empezar de nuevo!');
           },
         },

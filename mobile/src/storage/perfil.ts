@@ -18,6 +18,7 @@ export type AvatarKey = keyof typeof AVATARES;
 
 const NOMBRE_KEY = '@sphynx/nombre';
 const AVATAR_KEY = '@sphynx/avatar';
+const FOTO_KEY = '@sphynx/foto_perfil';
 const ONBOARDING_KEY = '@sphynx/onboarding_visto';
 
 export async function obtenerNombre(): Promise<string> {
@@ -35,6 +36,19 @@ export async function obtenerAvatar(): Promise<AvatarKey> {
 
 export async function guardarAvatar(key: AvatarKey): Promise<void> {
   await AsyncStorage.setItem(AVATAR_KEY, key);
+  await AsyncStorage.removeItem(FOTO_KEY);
+}
+
+export async function obtenerFoto(): Promise<string | null> {
+  return AsyncStorage.getItem(FOTO_KEY);
+}
+
+export async function guardarFoto(uri: string): Promise<void> {
+  await AsyncStorage.setItem(FOTO_KEY, uri);
+}
+
+export async function borrarFoto(): Promise<void> {
+  await AsyncStorage.removeItem(FOTO_KEY);
 }
 
 export async function vioOnboarding(): Promise<boolean> {

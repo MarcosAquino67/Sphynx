@@ -1,7 +1,8 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AccordionItem } from '@/components/AccordionItem';
 import { Button3D } from '@/components/Button3D';
@@ -19,6 +20,7 @@ export default function TeoriaScreen() {
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
   const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
   const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
+  const insets = useSafeAreaInsets();
 
   if (!unidad || !sub) {
     router.back();
@@ -28,7 +30,11 @@ export default function TeoriaScreen() {
   return (
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
-        <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.contenido, { paddingTop: insets.top + Spacing.four }]} showsVerticalScrollIndicator={false}>
+          <Pressable onPress={() => router.back()} style={styles.atras}>
+            <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
+            <Text style={styles.atrasTexto}>Atrás</Text>
+          </Pressable>
           <Text style={styles.titulo}>{sub.teoriaTitulo.toUpperCase()}</Text>
           <Pressable
             style={styles.idiomaPill}
@@ -94,6 +100,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.four,
     paddingBottom: Spacing.four,
+  },
+  atras: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: UI.rojo,
+    borderWidth: 2,
+    borderColor: UI.rojoOscuro,
+    borderBottomWidth: 4,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: Spacing.two,
+  },
+  atrasTexto: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   titulo: {
     fontSize: 22,

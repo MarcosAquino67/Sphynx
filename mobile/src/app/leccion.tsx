@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/app-header';
 import { Button3D } from '@/components/Button3D';
@@ -11,6 +12,7 @@ import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
+import { registrarRespuesta } from '@/storage/estadisticas';
 import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
@@ -34,6 +36,7 @@ export default function LeccionScreen() {
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
   const { registrarRacha } = useUserProgress();
+  const insets = useSafeAreaInsets();
 
   // Idioma guardado en Ajustes como valor inicial
   useEffect(() => {
@@ -57,9 +60,20 @@ export default function LeccionScreen() {
   const esCorrecta = seleccion === pregunta.respuesta_correcta;
   const textoPregunta = idioma === 'es' ? pregunta.pregunta_es : pregunta.pregunta_jopara;
 
+  // Aleatoriza el orden de las opciones en cada pregunta (la correcta no siempre es A)
+  const opcionesMezcladas = useMemo(() => {
+    const arr = [...pregunta.opciones];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [pregunta.id]);
+
   const responder = (opcion: string) => {
     if (respondio) return;
     setSeleccion(opcion);
+    registrarRespuesta(opcion === pregunta.respuesta_correcta);
   };
 
   const siguiente = () => {
@@ -79,7 +93,11 @@ export default function LeccionScreen() {
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <AppHeader />
 
-        <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={[styles.contenido, { paddingTop: insets.top + Spacing.two }]} showsVerticalScrollIndicator={false}>
+          <Pressable onPress={() => router.back()} style={styles.atras}>
+            <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
+            <Text style={styles.atrasTexto}>Atrás</Text>
+          </Pressable>
           <View style={styles.bannerFila}>
             <View style={styles.banner}>
               <Text style={styles.bannerTexto}>
@@ -111,12 +129,12 @@ export default function LeccionScreen() {
 
           {/* Opciones A-D estilo chunky */}
           <View style={styles.opciones}>
-            {pregunta.opciones.map((opcion, i) => {
+            {opcionesMezcladas.map((opcion, i) => {
               const esLaCorrecta = respondio && opcion === pregunta.respuesta_correcta;
               const esLaElegida = seleccion === opcion;
               return (
                 <Pressable
-                  key={opcion}
+                  key={`${pregunta.id}-${opcion}`}
                   onPress={() => responder(opcion)}
                   disabled={respondio}
                   style={[
@@ -176,6 +194,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.four,
     paddingBottom: Spacing.four,
+  },
+  atras: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: UI.rojo,
+    borderWidth: 2,
+    borderColor: UI.rojoOscuro,
+    borderBottomWidth: 4,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginBottom: Spacing.two,
+  },
+  atrasTexto: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   bannerFila: {
     flexDirection: 'row',
