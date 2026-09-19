@@ -124,7 +124,7 @@ export default function SubtemasScreen() {
             </View>
           ))}
 
-          <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} style={styles.mascota} />
+          <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </View>

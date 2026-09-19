@@ -74,7 +74,7 @@ export default function UnidadScreen() {
             />
           </View>
 
-          <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} style={styles.mascota} />
+          <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </View>
