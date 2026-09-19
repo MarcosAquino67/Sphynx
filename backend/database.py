@@ -25,4 +25,13 @@ def inicializar_bd():
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS usuarios (
+                usuario_id TEXT PRIMARY KEY,
+                streak INTEGER DEFAULT 0,
+                last_day TEXT
+            )
+            """
+        )
         conn.commit()
