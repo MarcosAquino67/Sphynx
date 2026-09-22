@@ -13,6 +13,7 @@ import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
 import { registrarRespuesta } from '@/storage/estadisticas';
+import { playAcierto, playError } from '@/services/sonidos';
 import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
@@ -73,7 +74,10 @@ export default function LeccionScreen() {
   const responder = (opcion: string) => {
     if (respondio) return;
     setSeleccion(opcion);
-    registrarRespuesta(opcion === pregunta.respuesta_correcta);
+    const correcta = opcion === pregunta.respuesta_correcta;
+    registrarRespuesta(correcta);
+    if (correcta) playAcierto();
+    else playError();
   };
 
   const siguiente = () => {

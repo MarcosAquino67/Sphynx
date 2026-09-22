@@ -9,6 +9,7 @@ import { Button3D } from '@/components/Button3D';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { MaxContentWidth, RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
+import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 const NODO = 76;
@@ -87,10 +88,12 @@ export default function NivelesScreen() {
       Alert.alert('Bloqueado', `Completá el nivel anterior para desbloquear "${nivel.nombre}".`);
       return;
     }
+    playClic();
     setSeleccionado(indice);
   };
 
   const empezar = () => {
+    playClic();
     router.push({ pathname: '/leccion', params: { id: String(nivelSel.leccionId) } } as any);
   };
 

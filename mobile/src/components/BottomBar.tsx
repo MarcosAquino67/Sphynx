@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 
 import { Spacing, UI } from '@/constants/theme';
+import { playClic } from '@/services/sonidos';
 import type { IconoMCI } from '@/data/unidades';
 
 type Tab = {
@@ -42,7 +43,10 @@ export function BottomBar() {
         return (
           <Pressable
             key={tab.ruta}
-            onPress={() => router.replace(tab.ruta as any)}
+            onPress={() => {
+              playClic();
+              router.replace(tab.ruta as any);
+            }}
             style={styles.tab}
             accessibilityRole="button"
             accessibilityLabel={tab.etiqueta}>

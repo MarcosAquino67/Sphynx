@@ -3,6 +3,7 @@ import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { playClic } from '@/services/sonidos';
 
 type Props = {
   /** Título de la sección, ej. "Definición". */
@@ -22,6 +23,7 @@ export function AccordionItem({ titulo, contenido, abiertoInicial = false }: Pro
   const [abierto, setAbierto] = useState(abiertoInicial);
 
   const alternar = () => {
+    playClic();
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setAbierto((v) => !v);
   };

@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Spacing, UI } from '@/constants/theme';
+import { playClic } from '@/services/sonidos';
 
 type Props = {
   /** Etiqueta encima del control, ej. "Distancia focal". */
@@ -19,13 +20,13 @@ export function Stepper({ etiqueta, valor, onMenos, onMas }: Props) {
     <View style={styles.wrap}>
       <Text style={styles.etiqueta}>{etiqueta}</Text>
       <View style={styles.fila}>
-        <Pressable onPress={onMenos} style={({ pressed }) => [styles.boton, pressed && styles.presionado]}>
+        <Pressable onPress={() => { playClic(); onMenos(); }} style={({ pressed }) => [styles.boton, pressed && styles.presionado]}>
           <Text style={styles.signo}>−</Text>
         </Pressable>
         <View style={styles.valorCaja}>
           <Text style={styles.valor}>{valor}</Text>
         </View>
-        <Pressable onPress={onMas} style={({ pressed }) => [styles.boton, pressed && styles.presionado]}>
+        <Pressable onPress={() => { playClic(); onMas(); }} style={({ pressed }) => [styles.boton, pressed && styles.presionado]}>
           <Text style={styles.signo}>+</Text>
         </Pressable>
       </View>

@@ -1,4 +1,5 @@
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
+import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
 
 /**
  * Pantalla INICIO: lista de unidades temáticas (mockup "UNIDADES TEMÁTICAS
@@ -13,7 +15,15 @@ import { UNIDADES, type Unidad } from '@/data/unidades';
  * Comenzar/Próximamente. Abajo, el robot mascota.
  */
 export default function InicioScreen() {
+  useEffect(() => {
+    playAmbiente();
+    return () => {
+      stopAmbiente();
+    };
+  }, []);
+
   const abrirUnidad = (unidad: Unidad) => {
+    playClic();
     if (!unidad.disponible) {
       Alert.alert('Próximamente', `"${unidad.nombre}" estará disponible muy pronto.`);
       return;

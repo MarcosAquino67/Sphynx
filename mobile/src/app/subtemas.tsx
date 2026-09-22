@@ -9,6 +9,7 @@ import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad, type Nivel, type Subtema } from '@/data/unidades';
+import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 /**
@@ -53,6 +54,7 @@ export default function SubtemasScreen() {
       Alert.alert('Bloqueado', `Completá el nivel anterior para desbloquear "${nivel.nombre}".`);
       return;
     }
+    playClic();
     router.push(
       {
         pathname: '/unidad',
