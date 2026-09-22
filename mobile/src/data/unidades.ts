@@ -20,6 +20,12 @@ export type SeccionTeoria = {
   texto_es: string;
   /** Versión en jopara (se alterna con el botón 🇵🇾/🇪🇸). */
   texto_jopara: string;
+  /** Imagen opcional de la sección (se muestra al abrir). */
+  imagen?: ImageSourcePropType;
+  /** Texto de referencia de la imagen (ej. fuente). */
+  referencia?: string;
+  /** URL de la referencia (si existe). */
+  referenciaUrl?: string;
 };
 
 export type Subtema = {
@@ -109,6 +115,17 @@ export const UNIDADES: Unidad[] = [
             texto_es: 'θ = ω·t · v = ω·R · ac = v²/R = ω²·R · T = 1/f',
             texto_jopara: 'θ = ω·t. v = ω·R. ac = v²/R. T = 1/f.',
           },
+          {
+            titulo: 'Unidades SI',
+            texto_es:
+              'T → segundo (s) · f → hertz (Hz = 1/s, 1 Hz = 60 rpm) · ω → radián por segundo (rad/s) · ' +
+              'v → metro por segundo (m/s) · ac → metro por segundo al cuadrado (m/s²) · R → metro (m) · θ → radián (rad). ' +
+              'Retroalimentación: revisá siempre que el resultado lleve su unidad SI.',
+            texto_jopara: 'T (s), f (Hz), ω (rad/s), v (m/s), ac (m/s²), R (m). Ejesareko unidad rehe!',
+            imagen: require('@/assets/images/unidades_si_mcu.png'),
+            referencia: 'Imagen: elaboración propia — Equipo Sphynx. Unidades según SI Brochure, BIPM 9ª edición.',
+            referenciaUrl: 'https://www.bipm.org/en/measurement-units/',
+          },
         ],
         niveles: [
           { n: 1, nombre: 'Período y frecuencia', leccionId: 101 },
@@ -187,6 +204,17 @@ export const UNIDADES: Unidad[] = [
               '1/f = 1/do + 1/di (do: objeto, di: imagen). Aumento: A = −di/do. ' +
               'Convergente: f’ > 0 (foco real). Divergente: f’ < 0 (foco virtual).',
             texto_jopara: '1/f = 1/do + 1/di. Aumento A = -di/do.',
+          },
+          {
+            titulo: 'Unidades SI',
+            texto_es:
+              'do, di, f → metro (m) — en los ejercicios se usa centímetro (cm) por comodidad: 1 m = 100 cm. ' +
+              'Aumento (A) → sin unidad. Potencia → dioptría (D = 1/m). Signo SI: convergente f > 0, divergente f < 0. ' +
+              'Retroalimentación: si ves cm, convertí a m para el SI.',
+            texto_jopara: 'do, di, f → metro (m), jaipurúva cm. Aumento ndorekói unidad. Dioptría = 1/m.',
+            imagen: require('@/assets/images/unidades_si_lentes.png'),
+            referencia: 'Imagen: elaboración propia — Equipo Sphynx. Diagrama basado en cuadernillo MEC Lentes.',
+            referenciaUrl: 'https://phet.colorado.edu/en/simulations/geometric-optics',
           },
         ],
         niveles: [

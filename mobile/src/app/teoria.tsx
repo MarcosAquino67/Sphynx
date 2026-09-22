@@ -58,6 +58,9 @@ export default function TeoriaScreen() {
                 key={sec.titulo}
                 titulo={sec.titulo}
                 contenido={idioma === 'es' ? sec.texto_es : sec.texto_jopara}
+                imagen={sec.imagen}
+                referencia={sec.referencia}
+                referenciaUrl={sec.referenciaUrl}
                 abiertoInicial={i === 0}
               />
             ))}

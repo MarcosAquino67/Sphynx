@@ -47,6 +47,10 @@ const FUENTES: Fuente[] = [
       },
       { texto: 'GIF del robot saludando: video del equipo Sphynx convertido a GIF' },
       { texto: 'Iconos de interfaz: MaterialCommunityIcons (@expo/vector-icons)' },
+      {
+        texto: 'Diagrama SI MCU y Lentes (sección Unidades SI): elaboración propia — Equipo Sphynx, basado en SI Brochure BIPM y cuadernillo MEC',
+        url: 'https://www.bipm.org/en/measurement-units/',
+      },
     ],
   },
   {
