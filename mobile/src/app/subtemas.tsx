@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HeaderUnit } from '@/components/HeaderUnit';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad, type Nivel, type Subtema } from '@/data/unidades';
 import { playClic } from '@/services/sonidos';
@@ -129,8 +128,6 @@ export default function SubtemasScreen() {
               </View>
             </View>
           ))}
-
-          <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>

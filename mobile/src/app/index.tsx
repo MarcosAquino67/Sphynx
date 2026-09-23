@@ -4,7 +4,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
 import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
@@ -64,15 +63,6 @@ export default function InicioScreen() {
               </Pressable>
             ))}
           </View>
-
-          {/* Robot mascota al pie (entra con saludo animado) */}
-          <RobotSaludo
-            imagen={require('@/assets/mascotas/robot.png')}
-            ancho={190}
-            alto={190}
-            conMarco={false}
-            style={styles.robot}
-          />
         </ScrollView>
       </SafeAreaView>
     </View>

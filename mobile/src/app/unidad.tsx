@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { HeaderUnit } from '@/components/HeaderUnit';
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
@@ -76,8 +75,6 @@ export default function UnidadScreen() {
               style={styles.boton}
             />
           </View>
-
-          <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
