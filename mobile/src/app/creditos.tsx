@@ -93,7 +93,8 @@ export default function CreditosScreen() {
 
           <View style={styles.colegio}>
             <Image source={require('@/assets/colegio/logo_colegio.png')} style={styles.logoColegio} contentFit="contain" />
-            <Text style={styles.colegioNombre}>Col. Nacional Mcal. F.S. López</Text>
+            <Text style={styles.colegioNombre}>Colegio Nacional E.M.D.</Text>
+            <Text style={styles.colegioNombre}>Mcal. Francisco Solano López</Text>
             <Text style={styles.colegioCiudad}>Caaguazú</Text>
           </View>
         </ScrollView>
