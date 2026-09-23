@@ -4,6 +4,7 @@ import Svg, { Circle, Defs, Ellipse, Line, Marker, Path } from 'react-native-svg
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { Button3D } from '@/components/Button3D';
+import { playAcierto, playError } from '@/services/sonidos';
 import { Stepper } from '@/components/Stepper';
 
 // Lienzo del diagrama (viewBox) y escala física
@@ -164,6 +165,7 @@ export function SimuladorLentes() {
     }
     if (desafio.check({ di, m, inf: infinito })) {
       setGanados((g) => g + 1);
+      playAcierto();
       setMensaje('🎉 ¡Desafío logrado! ¡Iporã! Pasando al siguiente...');
       // Avanza solo al siguiente desafío tras festejarlo
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -172,6 +174,7 @@ export function SimuladorLentes() {
         setMensaje('');
       }, 1800);
     } else {
+      playError();
       setMensaje('❌ Todavía no... ¡Probá otra vez!');
     }
   };

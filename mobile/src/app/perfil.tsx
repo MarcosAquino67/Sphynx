@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { obtenerEstadisticas, type Estadisticas } from '@/storage/estadisticas';
 import {
@@ -28,6 +29,7 @@ import {
  */
 export default function PerfilScreen() {
   const { streak } = useUserProgress();
+  const t = useTraduccion();
 
   const [nombre, setNombre] = useState('Estudiante');
   const [avatar, setAvatar] = useState<AvatarKey>('gato-saludo');
@@ -167,30 +169,30 @@ export default function PerfilScreen() {
                 <Image source={avatarSource} style={styles.avatar} contentFit="contain" />
               </View>
               <Text style={styles.nombre}>{nombre}</Text>
-              <Text style={styles.sub}>Cada día, peteĩ logro pyahu</Text>
+              <Text style={styles.sub}>{t('perfil.sub')}</Text>
 
               <View style={styles.stats}>
                 <View style={styles.statItem}>
                   <MaterialCommunityIcons name="fire" size={26} color={UI.naranja} />
                   <Text style={styles.statValor}>{streak}</Text>
-                  <Text style={styles.statEtiqueta}>Racha</Text>
+                  <Text style={styles.statEtiqueta}>{t('perfil.racha')}</Text>
                 </View>
                 <View style={styles.statItem}>
                   <MaterialCommunityIcons name="star" size={26} color={UI.estrella} />
                   <Text style={styles.statValor}>{stats.xp}</Text>
-                  <Text style={styles.statEtiqueta}>XP Total</Text>
+                  <Text style={styles.statEtiqueta}>{t('perfil.xp')}</Text>
                 </View>
                 <View style={styles.statItem}>
                   <MaterialCommunityIcons name="target" size={26} color={UI.verde} />
                   <Text style={styles.statValor}>
                     {stats.aciertos}/{stats.intentos}
                   </Text>
-                  <Text style={styles.statEtiqueta}>{precision}% aciertos</Text>
+                  <Text style={styles.statEtiqueta}>{t('perfil.aciertos')}</Text>
                 </View>
               </View>
 
               <Button3D
-                titulo="Editar perfil"
+                titulo={t('perfil.editar')}
                 icono="pencil"
                 color={UI.azul}
                 colorBorde={UI.azulOscuro}

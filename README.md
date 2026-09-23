@@ -127,7 +127,7 @@ eas build -p android --profile preview   # 5-10 min, te da link de descarga
 
 ## 📲 Uso
 
-1. **Carga** (logo + barra que hace pausa en 67%) → **Bienvenida** (robot SALUDO → PRESENTACION, siempre) → **Inicio** (Unidades).
+1. **Carga** (logo + barra) → **Bienvenida** (robot SALUDO → PRESENTACION, siempre) → **Inicio** (Unidades).
 2. **Inicio → Subtemas** (barra de progreso por subtema) → **Menú del nivel** (Aprender / Experimentar / Ejercicios).
 3. **Aprender** — teoría en acordeón bilingüe. **Experimentar** — simulador con 5 desafíos (`¡Comprobar!` avanza solo). **Ejercicios** — mapa curvo + quiz con opciones barajadas, feedback `¡Iporã!` / `Ndaha'éi... ¡Probá jey!`.
 4. **Perfil** — nombre + foto (mascota o del dispositivo) + XP/aciertos. **Progreso** — racha + lecciones.

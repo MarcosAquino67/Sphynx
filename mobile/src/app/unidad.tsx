@@ -1,11 +1,11 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { HeaderUnit } from '@/components/HeaderUnit';
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { Spacing, UI } from '@/constants/theme';
+import { useTraduccion } from '@/context/IdiomaContext';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
@@ -25,9 +25,13 @@ export default function UnidadScreen() {
 
   const nivel = sub.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? sub.niveles[0];
   const leccionId = nivel?.leccionId;
+  const t = useTraduccion();
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
 
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
@@ -39,7 +43,7 @@ export default function UnidadScreen() {
 
           <View style={styles.botones}>
             <Button3D
-              titulo="Aprender"
+              titulo={t('unidad.aprender')}
               icono="book-open-variant"
               color={UI.naranja}
               colorBorde={UI.naranjaOscuro}
@@ -51,7 +55,7 @@ export default function UnidadScreen() {
               style={styles.boton}
             />
             <Button3D
-              titulo="Experimentar (Jugar)"
+              titulo={t('unidad.experimentar')}
               icono="flask"
               color={UI.azul}
               colorBorde={UI.azulOscuro}
@@ -61,7 +65,7 @@ export default function UnidadScreen() {
               style={styles.boton}
             />
             <Button3D
-              titulo="Ejercicios"
+              titulo={t('unidad.ejercicios')}
               icono="pencil"
               color={UI.verde}
               colorBorde={UI.verdeOscuro}
@@ -73,11 +77,9 @@ export default function UnidadScreen() {
               style={styles.boton}
             />
           </View>
-
-          <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 

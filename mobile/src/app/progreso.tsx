@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { obtenerEstadisticas, type Estadisticas } from '@/storage/estadisticas';
 import { obtenerCompletadas } from '@/storage/progreso';
@@ -16,6 +17,7 @@ import { obtenerCompletadas } from '@/storage/progreso';
  */
 export default function ProgresoScreen() {
   const { streak } = useUserProgress();
+  const t = useTraduccion();
   const [completadas, setCompletadas] = useState<number[]>([]);
   const [stats, setStats] = useState<Estadisticas>({ xp: 0, aciertos: 0, intentos: 0 });
 
@@ -30,23 +32,23 @@ export default function ProgresoScreen() {
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          <Text style={styles.titulo}>Nde progreso</Text>
-          <Text style={styles.subtitulo}>Peteĩ ára de racha, peteĩ logro jahupyty</Text>
+          <Text style={styles.titulo}>{t('progreso.titulo')}</Text>
+          <Text style={styles.subtitulo}>{t('progreso.subtitulo')}</Text>
 
           {/* Tarjeta de racha */}
           <View style={styles.tarjeta}>
             <MaterialCommunityIcons name="fire" size={54} color={UI.naranja} />
             <Text style={styles.numeroGrande}>{streak}</Text>
-            <Text style={styles.etiqueta}>días de racha</Text>
+            <Text style={styles.etiqueta}>{t('progreso.racha')}</Text>
           </View>
 
           {/* Tarjeta de XP */}
           <View style={styles.tarjeta}>
             <MaterialCommunityIcons name="star" size={40} color={UI.estrella} />
             <Text style={styles.numeroGrande}>{stats.xp}</Text>
-            <Text style={styles.etiqueta}>XP total (+10 por acierto)</Text>
+            <Text style={styles.etiqueta}>{t('progreso.xp')}</Text>
             <Text style={styles.detalle}>
-              {stats.aciertos} aciertos / {stats.intentos} intentos
+              {stats.aciertos} {t('progreso.detalle')}
             </Text>
           </View>
 
@@ -54,11 +56,11 @@ export default function ProgresoScreen() {
           <View style={styles.tarjeta}>
             <MaterialCommunityIcons name="medal" size={40} color={UI.verde} />
             <Text style={styles.numeroGrande}>{completadas.length}</Text>
-            <Text style={styles.etiqueta}>lecciones listas</Text>
+            <Text style={styles.etiqueta}>{t('progreso.lecciones')}</Text>
           </View>
 
           <Button3D
-            titulo="Seguir aprendiendo"
+            titulo={t('progreso.seguir')}
             icono="play"
             color={UI.verde}
             colorBorde={UI.verdeOscuro}

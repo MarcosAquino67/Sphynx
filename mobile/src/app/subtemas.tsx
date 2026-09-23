@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HeaderUnit } from '@/components/HeaderUnit';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad, type Nivel, type Subtema } from '@/data/unidades';
+import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 /**
@@ -34,6 +34,10 @@ export default function SubtemasScreen() {
     return null;
   }
 
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
+
   const progresoDe = (sub: Subtema) => {
     const total = sub.niveles.length;
     if (total === 0) return 0;
@@ -53,6 +57,7 @@ export default function SubtemasScreen() {
       Alert.alert('Bloqueado', `Completá el nivel anterior para desbloquear "${nivel.nombre}".`);
       return;
     }
+    playClic();
     router.push(
       {
         pathname: '/unidad',
@@ -62,7 +67,7 @@ export default function SubtemasScreen() {
   };
 
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
@@ -123,11 +128,9 @@ export default function SubtemasScreen() {
               </View>
             </View>
           ))}
-
-          <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 

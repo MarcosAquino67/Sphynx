@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { Button3D } from '@/components/Button3D';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { MaxContentWidth, RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
+import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 const NODO = 76;
@@ -71,6 +72,10 @@ export default function NivelesScreen() {
     return null;
   }
 
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
+
   const niveles = sub.niveles;
   const ancho = Math.min(width, MaxContentWidth) - Spacing.four * 2;
   const primerPendiente = niveles.findIndex((n) => !completadas.includes(n.leccionId));
@@ -87,15 +92,17 @@ export default function NivelesScreen() {
       Alert.alert('Bloqueado', `Completá el nivel anterior para desbloquear "${nivel.nombre}".`);
       return;
     }
+    playClic();
     setSeleccionado(indice);
   };
 
   const empezar = () => {
+    playClic();
     router.push({ pathname: '/leccion', params: { id: String(nivelSel.leccionId) } } as any);
   };
 
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         {/* Cabecera: pills Ejercicios + TEMA + atrás */}
         <View style={styles.cabecera}>
@@ -135,7 +142,7 @@ export default function NivelesScreen() {
                   estado={estadoDe(nivel, completadas, indiceActivo, i)}
                   etiqueta={nivel.nombre}
                   tamano={NODO}
-                  fondoEtiqueta={UI.fondoVerde}
+                  fondoEtiqueta="rgba(255,255,255,0.92)"
                   onPress={() => tocarNodo(nivel, i)}
                 />
               </View>
@@ -162,7 +169,7 @@ export default function NivelesScreen() {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 
