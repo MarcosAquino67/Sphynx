@@ -73,16 +73,17 @@ export default function LeccionScreen() {
     else playError();
   };
 
-  const siguiente = () => {
+  const siguiente = async () => {
     if (indice + 1 < preguntas.length) {
       setIndice((i) => i + 1);
       setSeleccion(null);
       return;
     }
-    marcarCompletada(leccionId);
-    registrarRacha();
-    Alert.alert('🎉 ¡Lección completada!', '¡Apañá! Tu racha de estudio creció hoy.');
-    router.back();
+    await marcarCompletada(leccionId);
+    await registrarRacha();
+    Alert.alert('🎉 ¡Lección completada!', '¡Apañá! Tu racha de estudio creció hoy.', [
+      { text: 'OK', onPress: () => router.back() },
+    ]);
   };
 
   return (
