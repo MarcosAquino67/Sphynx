@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
+import { playClic } from '@/services/sonidos';
 import { borrarProgresoLecciones } from '@/storage/progreso';
 import { borrarEstadisticas } from '@/storage/estadisticas';
 
@@ -105,6 +107,20 @@ export default function AjustesScreen() {
               <Text style={styles.filaDesc}>Fuentes, licencias y atribuciones</Text>
             </View>
             <MaterialCommunityIcons name="chevron-right" size={24} color={UI.textoSuave} />
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              playClic();
+              Linking.openURL('https://projectsphynx.brianlucianovargascristaldo.workers.dev/');
+            }}
+            style={({ pressed }) => [styles.proyectoBtn, pressed && styles.creditosPresionado]}>
+            <Image source={require('@/assets/mascotas/gato-saludo.png')} style={styles.proyectoGato} contentFit="contain" />
+            <View style={styles.textos}>
+              <Text style={styles.filaTitulo}>Proyecto Sphynx</Text>
+              <Text style={styles.filaDesc}>Abrir página oficial</Text>
+            </View>
+            <MaterialCommunityIcons name="open-in-new" size={22} color={UI.textoSuave} />
           </Pressable>
 
           <Button3D
@@ -226,6 +242,27 @@ const styles = StyleSheet.create({
   },
   creditosPresionado: {
     opacity: 0.8,
+  },
+  proyectoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    backgroundColor: UI.tarjeta,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    padding: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  proyectoGato: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: UI.fondoVerde,
   },
   boton: {
     width: '100%',
