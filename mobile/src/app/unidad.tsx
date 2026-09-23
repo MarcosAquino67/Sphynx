@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -25,9 +25,12 @@ export default function UnidadScreen() {
 
   const nivel = sub.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? sub.niveles[0];
   const leccionId = nivel?.leccionId;
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondos/mecanica.png')
+    : require('@/assets/fondos/optica.png');
 
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
@@ -77,7 +80,7 @@ export default function UnidadScreen() {
           <RobotSaludo imagen={sub.mascota} ancho={210} alto={210} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 

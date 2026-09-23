@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ExternalLink } from '@/components/external-link';
@@ -89,6 +90,12 @@ export default function CreditosScreen() {
           ))}
 
           <Text style={styles.pie}>Sphynx · Física interactiva en Jopara · 2026</Text>
+
+          <View style={styles.colegio}>
+            <Image source={require('@/assets/colegio/logo_colegio.png')} style={styles.logoColegio} contentFit="contain" />
+            <Text style={styles.colegioNombre}>Col. Nacional Mcal. F.S. López</Text>
+            <Text style={styles.colegioCiudad}>Caaguazú</Text>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -143,6 +150,32 @@ const styles = StyleSheet.create({
     marginTop: Spacing.two,
     fontSize: 12,
     fontStyle: 'italic',
+    color: UI.textoSuave,
+    textAlign: 'center',
+  },
+  colegio: {
+    marginTop: Spacing.four,
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: UI.tarjeta,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    padding: Spacing.three,
+  },
+  logoColegio: {
+    width: 120,
+    height: 140,
+  },
+  colegioNombre: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: UI.texto,
+    textAlign: 'center',
+  },
+  colegioCiudad: {
+    fontSize: 13,
+    fontWeight: '700',
     color: UI.textoSuave,
     textAlign: 'center',
   },

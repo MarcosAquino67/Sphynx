@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,6 +35,10 @@ export default function SubtemasScreen() {
     return null;
   }
 
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondos/mecanica.png')
+    : require('@/assets/fondos/optica.png');
+
   const progresoDe = (sub: Subtema) => {
     const total = sub.niveles.length;
     if (total === 0) return 0;
@@ -64,7 +68,7 @@ export default function SubtemasScreen() {
   };
 
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           <HeaderUnit
@@ -129,7 +133,7 @@ export default function SubtemasScreen() {
           <RobotSaludo imagen={unidad.mascota} ancho={140} alto={140} conMarco={false} style={styles.mascota} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 
