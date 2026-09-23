@@ -25,8 +25,8 @@ export default function UnidadScreen() {
   const nivel = sub.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? sub.niveles[0];
   const leccionId = nivel?.leccionId;
   const fondo = unidad.id === 1
-    ? require('@/assets/fondos/mecanica.png')
-    : require('@/assets/fondos/optica.png');
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
 
   return (
     <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">

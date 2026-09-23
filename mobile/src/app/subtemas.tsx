@@ -35,8 +35,8 @@ export default function SubtemasScreen() {
   }
 
   const fondo = unidad.id === 1
-    ? require('@/assets/fondos/mecanica.png')
-    : require('@/assets/fondos/optica.png');
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
 
   const progresoDe = (sub: Subtema) => {
     const total = sub.niveles.length;

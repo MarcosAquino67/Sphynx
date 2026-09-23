@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -27,8 +27,12 @@ export default function TeoriaScreen() {
     return null;
   }
 
+  const fondo = unidad.id === 1
+    ? require('@/assets/fondo/mecanica_fondo.png')
+    : require('@/assets/fondo/optica_fondo.jpg');
+
   return (
-    <View style={styles.fondo}>
+    <ImageBackground source={fondo} style={styles.fondo} resizeMode="cover">
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={[styles.contenido, { paddingTop: insets.top + Spacing.four }]} showsVerticalScrollIndicator={false}>
           <Pressable onPress={() => router.back()} style={styles.atras}>
@@ -86,7 +90,7 @@ export default function TeoriaScreen() {
           </Pressable>
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 
