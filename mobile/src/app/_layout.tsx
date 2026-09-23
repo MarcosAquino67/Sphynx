@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BottomBar } from '@/components/BottomBar';
 import { SplashScreen as PantallaCarga } from '@/components/SplashScreen';
 import { WelcomeOnboarding } from '@/components/WelcomeOnboarding';
+import { IdiomaProvider } from '@/context/IdiomaContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,24 +43,26 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StatusBar hidden />
-      <View style={{ flex: 1 }}>
-        {!mostrarApp ? (
-          !cargaLista ? (
-            <PantallaCarga onFinish={() => setCargaLista(true)} />
-          ) : mostrarOnboarding ? (
-            <WelcomeOnboarding onStart={terminarPresentacion} />
+      <IdiomaProvider>
+        <StatusBar hidden />
+        <View style={{ flex: 1 }}>
+          {!mostrarApp ? (
+            !cargaLista ? (
+              <PantallaCarga onFinish={() => setCargaLista(true)} />
+            ) : mostrarOnboarding ? (
+              <WelcomeOnboarding onStart={terminarPresentacion} />
+            ) : (
+              // Esperando a leer AsyncStorage, mantenemos la carga
+              <PantallaCarga onFinish={() => setCargaLista(true)} />
+            )
           ) : (
-            // Esperando a leer AsyncStorage, mantenemos la carga
-            <PantallaCarga onFinish={() => setCargaLista(true)} />
-          )
-        ) : (
-          <>
-            <Slot />
-            <BottomBar />
-          </>
-        )}
-      </View>
+            <>
+              <Slot />
+              <BottomBar />
+            </>
+          )}
+        </View>
+      </IdiomaProvider>
     </ThemeProvider>
   );
 }

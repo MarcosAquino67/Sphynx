@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
 
 /**
@@ -14,6 +15,9 @@ import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
  * Comenzar/Próximamente. Abajo, el robot mascota.
  */
 export default function InicioScreen() {
+  const { idioma } = useIdioma();
+  const t = useTraduccion();
+
   useEffect(() => {
     playAmbiente();
     return () => {
@@ -24,7 +28,7 @@ export default function InicioScreen() {
   const abrirUnidad = (unidad: Unidad) => {
     playClic();
     if (!unidad.disponible) {
-      Alert.alert('Próximamente', `"${unidad.nombre}" estará disponible muy pronto.`);
+      Alert.alert(t('inicio.proximamente'), `"${unidad.nombre}" estará disponible muy pronto.`);
       return;
     }
     router.push({ pathname: '/subtemas', params: { unidad: String(unidad.id) } } as any);
@@ -52,11 +56,12 @@ export default function InicioScreen() {
                 </View>
                 <View style={styles.textos}>
                   <Text style={styles.tarjetaTitulo}>{unidad.titulo}</Text>
-                  <Text style={styles.tarjetaDesc}>{unidad.descripcion}</Text>
-                  <Text style={styles.tarjetaJopara}>{unidad.descripcion_jopara}</Text>
+                  <Text style={styles.tarjetaDesc}>
+                    {idioma === 'jopara' ? unidad.descripcion_jopara : unidad.descripcion}
+                  </Text>
                   <View style={styles.pildora}>
                     <Text style={styles.pildoraTexto}>
-                      {unidad.disponible ? 'Comenzar' : 'Próximamente'}
+                      {unidad.disponible ? t('inicio.comenzar') : t('inicio.proximamente')}
                     </Text>
                   </View>
                 </View>

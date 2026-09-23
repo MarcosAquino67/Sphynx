@@ -1,5 +1,4 @@
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +7,7 @@ import { AccordionItem } from '@/components/AccordionItem';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { Spacing, UI } from '@/constants/theme';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
@@ -19,7 +19,8 @@ export default function TeoriaScreen() {
   const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
   const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
-  const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
+  const { idioma } = useIdioma();
+  const t = useTraduccion();
   const insets = useSafeAreaInsets();
 
   if (!unidad || !sub) {
@@ -40,13 +41,6 @@ export default function TeoriaScreen() {
             <Text style={styles.atrasTexto}>Atrás</Text>
           </Pressable>
           <Text style={styles.titulo}>{sub.teoriaTitulo.toUpperCase()}</Text>
-          <Pressable
-            style={styles.idiomaPill}
-            onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')}>
-            <Text style={styles.idiomaTexto}>
-              {idioma === 'es' ? '🇵🇾 Jopara' : '🇪🇸 Español'}
-            </Text>
-          </Pressable>
 
           <RobotSaludo
             imagen={sub.mascota}
@@ -73,7 +67,7 @@ export default function TeoriaScreen() {
           <Text style={styles.fuente}>Fuente: Cuadernillo MEC · Física 3er curso</Text>
 
           <Button3D
-            titulo="EJERCICIOS"
+            titulo={t('teoria.ejercicios')}
             icono="pencil"
             color={unidad.color}
             colorBorde={unidad.colorOscuro}
@@ -86,7 +80,7 @@ export default function TeoriaScreen() {
           />
 
           <Pressable onPress={() => router.back()} style={styles.backPage}>
-            <Text style={styles.backPageTexto}>Back page</Text>
+            <Text style={styles.backPageTexto}>{t('teoria.back')}</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>

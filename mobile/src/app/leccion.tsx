@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,6 +9,7 @@ import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
 import { registrarRespuesta } from '@/storage/estadisticas';
@@ -17,7 +17,6 @@ import { playAcierto, playError } from '@/services/sonidos';
 import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
-const IDIOMA_KEY = '@sphynx/idioma';
 
 function tituloLeccion(id: number) {
   return nombreLeccion(id);
@@ -35,22 +34,16 @@ export default function LeccionScreen() {
 
   const [indice, setIndice] = useState(0);
   const [seleccion, setSeleccion] = useState<string | null>(null);
-  const [idioma, setIdioma] = useState<'es' | 'jopara'>('es');
+  const { idioma } = useIdioma();
+  const t = useTraduccion();
   const { registrarRacha } = useUserProgress();
   const insets = useSafeAreaInsets();
-
-  // Idioma guardado en Ajustes como valor inicial
-  useEffect(() => {
-    AsyncStorage.getItem(IDIOMA_KEY).then((v) => {
-      if (v === 'jopara') setIdioma('jopara');
-    });
-  }, []);
 
   if (preguntas.length === 0) {
     return (
       <View style={[styles.fondo, styles.centro]}>
-        <Text style={styles.sinPreguntas}>Sin preguntas aún</Text>
-        <Button3D titulo="Volver" color={UI.azul} colorBorde={UI.azulOscuro} onPress={() => router.back()} />
+        <Text style={styles.sinPreguntas}>{t('leccion.sinPreguntas')}</Text>
+        <Button3D titulo={t('leccion.volver')} color={UI.azul} colorBorde={UI.azulOscuro} onPress={() => router.back()} />
       </View>
     );
   }
@@ -100,7 +93,7 @@ export default function LeccionScreen() {
         <ScrollView contentContainerStyle={[styles.contenido, { paddingTop: insets.top + Spacing.two }]} showsVerticalScrollIndicator={false}>
           <Pressable onPress={() => router.back()} style={styles.atras}>
             <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
-            <Text style={styles.atrasTexto}>Atrás</Text>
+            <Text style={styles.atrasTexto}>{t('header.atras')}</Text>
           </Pressable>
           <View style={styles.bannerFila}>
             <View style={styles.banner}>
@@ -108,13 +101,6 @@ export default function LeccionScreen() {
                 Nivel {numeroLeccion(leccionId)}: {titulo}
               </Text>
             </View>
-            <Pressable
-              style={styles.idiomaPill}
-              onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')}>
-              <Text style={styles.idiomaTexto}>
-                {idioma === 'es' ? '🇵🇾 Jopara' : '🇪🇸 Español'}
-              </Text>
-            </Pressable>
           </View>
 
           {/* Burbuja de pregunta con la mascota */}
@@ -158,11 +144,11 @@ export default function LeccionScreen() {
           {respondio && (
             <View style={styles.feedback}>
               <Text style={styles.feedbackTitulo}>
-                {esCorrecta ? '✅ ¡Iporã! Correcto' : '❌ Ndaha’éi... ¡Probá jey!'}
+                {esCorrecta ? t('leccion.correcto') : t('leccion.error')}
               </Text>
               <Text style={styles.feedbackTexto}>{pregunta.explicacion_jopara}</Text>
               <Button3D
-                titulo={indice + 1 < preguntas.length ? 'Siguiente' : 'Finalizar'}
+                titulo={indice + 1 < preguntas.length ? t('leccion.siguiente') : t('leccion.finalizar')}
                 color={esCorrecta ? UI.verde : UI.rojo}
                 colorBorde={esCorrecta ? UI.verdeOscuro : UI.rojoOscuro}
                 onPress={siguiente}

@@ -4,6 +4,7 @@ import { router, usePathname } from 'expo-router';
 
 import { Spacing, UI } from '@/constants/theme';
 import { playClic } from '@/services/sonidos';
+import { useTraduccion } from '@/context/IdiomaContext';
 import type { IconoMCI } from '@/data/unidades';
 
 type Tab = {
@@ -11,14 +12,6 @@ type Tab = {
   etiqueta: string;
   icono: IconoMCI;
 };
-
-/** Las 4 pestañas principales (mockups: Inicio, Progreso, Perfil, Ajustes). */
-const TABS: Tab[] = [
-  { ruta: '/', etiqueta: 'Inicio', icono: 'home' },
-  { ruta: '/progreso', etiqueta: 'Progreso', icono: 'chart-bar' },
-  { ruta: '/perfil', etiqueta: 'Perfil', icono: 'account' },
-  { ruta: '/ajustes', etiqueta: 'Ajustes', icono: 'cog' },
-];
 
 /** Rutas de detalle donde la barra se oculta (pantallas con botón Atrás). */
 const RUTAS_OCULTAS = ['/unidad', '/subtemas', '/niveles', '/teoria', '/leccion', '/experimento', '/creditos', '/bienvenida'];
@@ -30,6 +23,14 @@ const RUTAS_OCULTAS = ['/unidad', '/subtemas', '/niveles', '/teoria', '/leccion'
  */
 export function BottomBar() {
   const pathname = usePathname();
+  const t = useTraduccion();
+
+  const tabs: Tab[] = [
+    { ruta: '/', etiqueta: t('bottom.inicio'), icono: 'home' },
+    { ruta: '/progreso', etiqueta: t('bottom.progreso'), icono: 'chart-bar' },
+    { ruta: '/perfil', etiqueta: t('bottom.perfil'), icono: 'account' },
+    { ruta: '/ajustes', etiqueta: t('bottom.ajustes'), icono: 'cog' },
+  ];
 
   if (RUTAS_OCULTAS.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
     return null;
@@ -37,7 +38,7 @@ export function BottomBar() {
 
   return (
     <View style={styles.barra}>
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const activa = pathname === tab.ruta;
         const color = activa ? UI.azul : UI.iconoInactivo;
         return (
