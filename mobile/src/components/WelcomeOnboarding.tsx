@@ -23,15 +23,7 @@ export function WelcomeOnboarding({ onStart }: Props) {
     <View style={styles.container}>
       {/* Zona superior: robot + bocadillo de diálogo */}
       <View style={styles.presentationRow}>
-        <Image
-          source={
-            step === 1
-              ? require('@/assets/mascotas/robot_saludando.gif')
-              : require('@/assets/mascotas/robot_presentacion.gif')
-          }
-          style={styles.robotImage}
-          contentFit="contain"
-        />
+        <Image source={require('@/assets/mascotas/robot_saludando.gif')} style={styles.robotImage} contentFit="contain" />
 
         <View style={styles.speechBubble}>
           <View style={styles.triangleLeft} />
