@@ -47,8 +47,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6e46e744-de5f-4796-a5e7-b82cd1fc4ff0"
+        "projectId": "36ef573e-85fc-44d8-85af-f3b9d7e5eec5"
       }
-    }
+    },
+    "owner": "marcosaquino6"
   }
 }
