@@ -7,11 +7,6 @@
     "icon": "./assets/SPHYNX_png.png",
     "scheme": "sphynx",
     "userInterfaceStyle": "light",
-    "androidStatusBar": {
-      "hidden": true,
-      "translucent": true,
-      "backgroundColor": "#00000000"
-    },
     "ios": {
       "icon": "./assets/SPHYNX_png.png",
       "infoPlist": {
@@ -42,7 +37,8 @@
           "imageWidth": 200
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
