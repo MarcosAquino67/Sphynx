@@ -12,7 +12,7 @@
 
 ## 🎮 ¿Qué es Sphynx?
 
-**Sphynx** (también presentada como **Fisik-IA** en los mockups) es una app móvil para estudiantes de 3er curso que convierte los cuadernillos MEC de Física en una experiencia interactiva:
+**Sphynx** es una app móvil para estudiantes de 3er curso que convierte los cuadernillos MEC de Física en una experiencia interactiva:
 
 - **Interfaz gamificada** — camino en zig-zag, nodos metálicos, racha diaria y XP por acierto.
 - **Bilingüe real (joparaite)** — preguntas, teoría y feedback en español y guaraní, como se habla en el cole.
