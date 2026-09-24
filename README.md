@@ -168,6 +168,16 @@ Proyecto educativo para el hackathon. Si reutilizás simuladores inspirados en P
 
 ## 👥 Equipo
 
-**Sphynx** — Marcos Aquino y equipo. Física en Jopara, con mucho 💙 y con el robot saludando siempre.
+**¿Quiénes creamos Sphynx?** Todos los integrantes fuimos capacitados bajo la tutela del **Ingeniero Ysidro Manuel Denis**.
+
+| Rol | Integrante | Aporte |
+|---|---|---|
+| **Programador** | **Marcos Aurelio Aquino** | Programó el código de la app: lógica React Native + Expo, 40 preguntas, AsyncStorage, simuladores SVG. |
+| **Programador** | **Brian Cristaldo** | Hizo la página web oficial: diseño responsive y galería de fotos. |
+| **Diseñador** | **Brian Carriles** | Avatar, menús y sonidos — junto a Ludmila diseñó el avatar del gato, menús y sonidos. |
+| **Diseñadora** | **Ludmila Baez** | Avatar, menús y sonidos — paleta pastel, menús y sonidos (dupla con Brian Carriles). |
+| **Diseñador** | **Ricardo Leiva** | Encargado del Robot — diseñó y animó al Robot, mascota secundaria GIF sin fondo. |
+
+🌐 Sitio oficial: https://projectsphynx.brianlucianovargascristaldo.workers.dev/
 
 > *¿Ideas?* Agregá Termodinámica como nuevo subtema en `unidades.ts` y 5 preguntas en `preguntas.ts` — el resto (acordeón, mapa, progreso) ya lo maneja solo.
