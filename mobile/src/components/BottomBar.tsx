@@ -29,6 +29,7 @@ export function BottomBar() {
     { ruta: '/', etiqueta: t('bottom.inicio'), icono: 'home' },
     { ruta: '/progreso', etiqueta: t('bottom.progreso'), icono: 'chart-bar' },
     { ruta: '/perfil', etiqueta: t('bottom.perfil'), icono: 'account' },
+    { ruta: '/sphynx-ia', etiqueta: 'SPHYNX IA', icono: 'cat' },
     { ruta: '/ajustes', etiqueta: t('bottom.ajustes'), icono: 'cog' },
   ];
 
