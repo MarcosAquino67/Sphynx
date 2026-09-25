@@ -9,7 +9,7 @@ import { Button3D } from '@/components/Button3D';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { MaxContentWidth, RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
-import { useIdioma } from '@/context/IdiomaContext';
+import { SelectorIdioma } from '@/components/SelectorIdioma';
 import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
@@ -59,7 +59,6 @@ export default function NivelesScreen() {
   const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
   const { width } = useWindowDimensions();
 
-  const { idioma, setIdioma } = useIdioma();
   const [completadas, setCompletadas] = useState<number[]>([]);
   const [seleccionado, setSeleccionado] = useState(0);
 
@@ -118,9 +117,7 @@ export default function NivelesScreen() {
             <Text style={styles.pildoraTexto}>TEMA: {sub.nombre}</Text>
           </View>
         </View>
-        <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
-          <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JOPARA' : 'JOPARA → ES'}</Text>
-        </Pressable>
+        <SelectorIdioma />
 
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
           {/* Camino curvo continuo que une los nodos */}
@@ -214,21 +211,6 @@ const styles = StyleSheet.create({
   },
   pildoraTexto: {
     fontSize: 13,
-    fontWeight: '800',
-    color: UI.texto,
-  },
-  idiomaPill: {
-    alignSelf: 'center',
-    marginTop: Spacing.two,
-    backgroundColor: UI.tarjeta,
-    borderWidth: 2,
-    borderColor: UI.bordeTarjeta,
-    borderRadius: 16,
-    paddingHorizontal: Spacing.two,
-    paddingVertical: 5,
-  },
-  idiomaTexto: {
-    fontSize: 12,
     fontWeight: '800',
     color: UI.texto,
   },
