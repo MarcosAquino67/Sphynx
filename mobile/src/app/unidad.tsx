@@ -1,11 +1,11 @@
-import { ImageBackground, ScrollView, StyleSheet, View } from 'react-native';
+import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { HeaderUnit } from '@/components/HeaderUnit';
 import { Spacing, UI } from '@/constants/theme';
-import { useTraduccion } from '@/context/IdiomaContext';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
 
 /**
@@ -25,6 +25,7 @@ export default function UnidadScreen() {
 
   const nivel = sub.niveles.find((n) => n.leccionId === Number(params.leccion)) ?? sub.niveles[0];
   const leccionId = nivel?.leccionId;
+  const { idioma, setIdioma } = useIdioma();
   const t = useTraduccion();
   const fondo = unidad.id === 1
     ? require('@/assets/fondo/mecanica_fondo.png')
@@ -40,6 +41,9 @@ export default function UnidadScreen() {
             mostrarAtras
             variante="simple"
           />
+          <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
+            <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JOPARA' : 'JOPARA → ES'}</Text>
+          </Pressable>
 
           <View style={styles.botones}>
             <Button3D
@@ -96,6 +100,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.two,
     paddingBottom: Spacing.four,
+  },
+  idiomaPill: {
+    marginTop: Spacing.two,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    borderRadius: 16,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 5,
+    alignSelf: 'center',
+  },
+  idiomaTexto: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: UI.texto,
   },
   botones: {
     width: '100%',

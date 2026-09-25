@@ -34,7 +34,7 @@ export default function LeccionScreen() {
 
   const [indice, setIndice] = useState(0);
   const [seleccion, setSeleccion] = useState<string | null>(null);
-  const { idioma } = useIdioma();
+  const { idioma, setIdioma } = useIdioma();
   const t = useTraduccion();
   const { registrarRacha } = useUserProgress();
   const insets = useSafeAreaInsets();
@@ -102,6 +102,9 @@ export default function LeccionScreen() {
                 Nivel {numeroLeccion(leccionId)}: {titulo}
               </Text>
             </View>
+            <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
+              <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JP' : 'JP → ES'}</Text>
+            </Pressable>
           </View>
 
           {/* Burbuja de pregunta con la mascota */}
