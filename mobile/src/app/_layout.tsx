@@ -1,8 +1,8 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useMemo, useState } from 'react';
-import { PanResponder, useColorScheme, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, PanResponder, useColorScheme, View } from 'react-native';
 import { router, Slot, usePathname } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,13 +41,23 @@ export default function RootLayout() {
   };
 
   const pathname = usePathname();
+  const translateX = useRef(new Animated.Value(0)).current;
 
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onMoveShouldSetPanResponder: (_evt, { dx, dy }) =>
           Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy) * 1.2,
+        onPanResponderMove: (_evt, { dx }) => {
+          const esRutaTab = (TABS_ORDEN as readonly string[]).includes(pathname);
+          const esRutaOculta = RUTAS_SIN_SWIPE.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+          if (!esRutaTab || esRutaOculta) return;
+          // Efecto TikTok: la pantalla sigue un poco el dedo (máx 28% del ancho)
+          const clamped = Math.max(-90, Math.min(90, dx * 0.35));
+          translateX.setValue(clamped);
+        },
         onPanResponderRelease: (_evt, { dx, vx }) => {
+          Animated.spring(translateX, { toValue: 0, useNativeDriver: true, bounciness: 6, speed: 14 }).start();
           const esRutaTab = (TABS_ORDEN as readonly string[]).includes(pathname);
           const esRutaOculta = RUTAS_SIN_SWIPE.some((r) => pathname === r || pathname.startsWith(`${r}/`));
           if (!esRutaTab || esRutaOculta) return;
@@ -60,8 +70,11 @@ export default function RootLayout() {
             router.replace(TABS_ORDEN[idx - 1] as any);
           }
         },
+        onPanResponderTerminate: () => {
+          Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+        },
       }),
-    [pathname],
+    [pathname, translateX],
   );
 
   useEffect(() => {
@@ -95,9 +108,9 @@ export default function RootLayout() {
             )
           ) : (
             <>
-              <View style={{ flex: 1 }} {...panResponder.panHandlers}>
+              <Animated.View style={{ flex: 1, transform: [{ translateX }] }} {...panResponder.panHandlers}>
                 <Slot />
-              </View>
+              </Animated.View>
               <BottomBar />
             </>
           )}
