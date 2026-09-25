@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderUnit } from '@/components/HeaderUnit';
 import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { useIdioma } from '@/context/IdiomaContext';
 import { obtenerUnidad, type Nivel, type Subtema } from '@/data/unidades';
 import { playClic } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
@@ -21,6 +22,7 @@ export default function SubtemasScreen() {
   const params = useLocalSearchParams<{ unidad?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
 
+  const { idioma, setIdioma } = useIdioma();
   const [completadas, setCompletadas] = useState<number[]>([]);
 
   useFocusEffect(
@@ -76,6 +78,9 @@ export default function SubtemasScreen() {
             mostrarAtras
             variante="simple"
           />
+          <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
+            <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JOPARA' : 'JOPARA → ES'}</Text>
+          </Pressable>
 
           {unidad.subtemas.map((sub) => (
             <View key={sub.id} style={styles.seccion}>
@@ -141,6 +146,20 @@ const styles = StyleSheet.create({
   },
   safe: {
     flex: 1,
+  },
+  idiomaPill: {
+    marginTop: Spacing.two,
+    backgroundColor: UI.tarjeta,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    borderRadius: 16,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 5,
+  },
+  idiomaTexto: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: UI.texto,
   },
   contenido: {
     alignItems: 'center',
