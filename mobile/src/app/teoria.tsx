@@ -19,7 +19,7 @@ export default function TeoriaScreen() {
   const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
   const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
-  const { idioma } = useIdioma();
+  const { idioma, setIdioma } = useIdioma();
   const t = useTraduccion();
   const insets = useSafeAreaInsets();
 
@@ -41,6 +41,9 @@ export default function TeoriaScreen() {
             <Text style={styles.atrasTexto}>Atrás</Text>
           </Pressable>
           <Text style={styles.titulo}>{sub.teoriaTitulo.toUpperCase()}</Text>
+          <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
+            <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JOPARA' : 'JOPARA → ES'}</Text>
+          </Pressable>
 
           <RobotSaludo
             imagen={sub.mascota}
