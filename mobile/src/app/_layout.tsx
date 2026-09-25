@@ -16,7 +16,7 @@ SplashScreen.preventAutoHideAsync();
 
 const ONBOARDING_KEY = '@sphynx/onboarding_visto';
 
-const TABS_ORDEN = ['/', '/progreso', '/perfil', '/ajustes'] as const;
+const TABS_ORDEN = ['/', '/progreso', '/perfil', '/sphynx-ia', '/ajustes'] as const;
 const RUTAS_SIN_SWIPE = ['/unidad', '/subtemas', '/niveles', '/teoria', '/leccion', '/experimento', '/creditos', '/bienvenida'];
 
 /**
@@ -69,7 +69,7 @@ export default function RootLayout() {
       stopAmbiente();
       return;
     }
-    // Música ambiente en los 4 tabs principales (Inicio/Progreso/Perfil/Ajustes)
+    // Música ambiente en los 5 tabs principales (Inicio/Progreso/Perfil/SPHYNX IA/Ajustes)
     const enTab = (TABS_ORDEN as readonly string[]).includes(pathname);
     if (enTab) playAmbiente();
     else stopAmbiente();
