@@ -7,6 +7,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AppHeader } from '@/components/app-header';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
+import { SelectorIdioma } from '@/components/SelectorIdioma';
 import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
@@ -37,7 +38,7 @@ export default function LeccionScreen() {
   const [aciertosNivel, setAciertosNivel] = useState(0);
   const [mostrarInforme, setMostrarInforme] = useState(false);
   const [progresoPct, setProgresoPct] = useState(0);
-  const { idioma, setIdioma } = useIdioma();
+  const { idioma } = useIdioma();
   const t = useTraduccion();
   const { registrarRacha } = useUserProgress();
   const insets = useSafeAreaInsets();
@@ -112,10 +113,8 @@ export default function LeccionScreen() {
                 Nivel {numeroLeccion(leccionId)}: {titulo}
               </Text>
             </View>
-            <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
-              <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JP' : 'JP → ES'}</Text>
-            </Pressable>
           </View>
+          <SelectorIdioma compact />
 
           {/* Burbuja de pregunta con la mascota */}
           <View style={styles.preguntaZona}>
@@ -290,19 +289,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '800',
     fontSize: 14,
-  },
-  idiomaPill: {
-    backgroundColor: UI.tarjeta,
-    borderWidth: 2,
-    borderColor: UI.bordeTarjeta,
-    borderRadius: 16,
-    paddingHorizontal: Spacing.two,
-    paddingVertical: 5,
-  },
-  idiomaTexto: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: UI.texto,
   },
   preguntaZona: {
     width: '100%',
