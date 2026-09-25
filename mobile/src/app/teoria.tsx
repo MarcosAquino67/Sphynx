@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { AccordionItem } from '@/components/AccordionItem';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
+import { SelectorIdioma } from '@/components/SelectorIdioma';
 import { Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
@@ -19,7 +20,7 @@ export default function TeoriaScreen() {
   const params = useLocalSearchParams<{ unidad?: string; subtema?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
   const sub = unidad && obtenerSubtema(unidad.id, Number(params.subtema ?? unidad.subtemas[0]?.id ?? 1));
-  const { idioma, setIdioma } = useIdioma();
+  const { idioma } = useIdioma();
   const t = useTraduccion();
   const insets = useSafeAreaInsets();
 
@@ -41,9 +42,7 @@ export default function TeoriaScreen() {
             <Text style={styles.atrasTexto}>Atrás</Text>
           </Pressable>
           <Text style={styles.titulo}>{sub.teoriaTitulo.toUpperCase()}</Text>
-          <Pressable onPress={() => setIdioma(idioma === 'es' ? 'jopara' : 'es')} style={styles.idiomaPill}>
-            <Text style={styles.idiomaTexto}>{idioma === 'es' ? 'ES → JOPARA' : 'JOPARA → ES'}</Text>
-          </Pressable>
+          <SelectorIdioma />
 
           <RobotSaludo
             imagen={sub.mascota}
@@ -129,20 +128,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: UI.texto,
     textAlign: 'center',
-  },
-  idiomaPill: {
-    marginTop: Spacing.two,
-    backgroundColor: UI.tarjeta,
-    borderWidth: 2,
-    borderColor: UI.bordeTarjeta,
-    borderRadius: 16,
-    paddingHorizontal: Spacing.two,
-    paddingVertical: 5,
-  },
-  idiomaTexto: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: UI.texto,
   },
   acordeon: {
     width: '100%',
