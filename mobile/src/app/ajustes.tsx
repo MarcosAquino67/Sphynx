@@ -10,7 +10,7 @@ import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
-import { playClic } from '@/services/sonidos';
+import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
 import { borrarProgresoLecciones } from '@/storage/progreso';
 import { borrarEstadisticas } from '@/storage/estadisticas';
 
@@ -42,6 +42,8 @@ export default function AjustesScreen() {
     playClic();
     setSonido(valor);
     await AsyncStorage.setItem(SONIDO_KEY, valor ? 'on' : 'off');
+    if (valor) playAmbiente();
+    else stopAmbiente();
   };
 
   const borrarProgreso = () => {

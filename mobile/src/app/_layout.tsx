@@ -10,6 +10,7 @@ import { BottomBar } from '@/components/BottomBar';
 import { SplashScreen as PantallaCarga } from '@/components/SplashScreen';
 import { WelcomeOnboarding } from '@/components/WelcomeOnboarding';
 import { IdiomaProvider } from '@/context/IdiomaContext';
+import { playAmbiente, stopAmbiente } from '@/services/sonidos';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -62,6 +63,17 @@ export default function RootLayout() {
       }),
     [pathname],
   );
+
+  useEffect(() => {
+    if (!cargaLista || onboardingVisto !== true) {
+      stopAmbiente();
+      return;
+    }
+    // Música ambiente en los 4 tabs principales (Inicio/Progreso/Perfil/Ajustes)
+    const enTab = (TABS_ORDEN as readonly string[]).includes(pathname);
+    if (enTab) playAmbiente();
+    else stopAmbiente();
+  }, [cargaLista, onboardingVisto, pathname, presentacionLista]);
 
   // Mientras carga la barra o aún no sabemos si ya vio el onboarding, mostramos la carga
   const mostrarOnboarding = cargaLista && onboardingVisto === false && !presentacionLista;

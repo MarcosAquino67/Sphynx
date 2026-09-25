@@ -1,5 +1,4 @@
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
-import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
+import { playClic } from '@/services/sonidos';
 
 /**
  * Pantalla INICIO: lista de unidades temáticas (mockup "UNIDADES TEMÁTICAS
@@ -17,13 +16,6 @@ import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
 export default function InicioScreen() {
   const { idioma } = useIdioma();
   const t = useTraduccion();
-
-  useEffect(() => {
-    playAmbiente();
-    return () => {
-      stopAmbiente();
-    };
-  }, []);
 
   const abrirUnidad = (unidad: Unidad) => {
     playClic();
