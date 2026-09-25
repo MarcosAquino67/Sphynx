@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { LayoutAnimation, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LayoutAnimation, Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { ExternalLink } from '@/components/external-link';
+import { playClic } from '@/services/sonidos';
 
 type Props = {
   /** Título de la sección, ej. "Definición". */
@@ -11,6 +14,12 @@ type Props = {
   contenido: string;
   /** Si empieza abierto (por defecto solo la primera sección). */
   abiertoInicial?: boolean;
+  /** Imagen opcional de la sección. */
+  imagen?: ImageSourcePropType;
+  /** Texto de referencia de la imagen. */
+  referencia?: string;
+  /** URL de la referencia. */
+  referenciaUrl?: string;
 };
 
 /**
@@ -18,10 +27,11 @@ type Props = {
  * Toca el encabezado para abrir/cerrar con animación suave.
  * Cada item maneja su propio estado independiente.
  */
-export function AccordionItem({ titulo, contenido, abiertoInicial = false }: Props) {
+export function AccordionItem({ titulo, contenido, abiertoInicial = false, imagen, referencia, referenciaUrl }: Props) {
   const [abierto, setAbierto] = useState(abiertoInicial);
 
   const alternar = () => {
+    playClic();
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setAbierto((v) => !v);
   };
@@ -39,6 +49,16 @@ export function AccordionItem({ titulo, contenido, abiertoInicial = false }: Pro
       {abierto && (
         <View style={styles.contenido}>
           <Text style={styles.texto}>{contenido}</Text>
+          {imagen && <Image source={imagen} style={styles.imagen} contentFit="contain" transition={200} />}
+          {referencia && (
+            referenciaUrl ? (
+              <ExternalLink href={referenciaUrl as any}>
+                <Text style={styles.referencia}>🔗 {referencia}</Text>
+              </ExternalLink>
+            ) : (
+              <Text style={styles.referencia}>{referencia}</Text>
+            )
+          )}
         </View>
       )}
     </View>
@@ -78,10 +98,25 @@ const styles = StyleSheet.create({
   contenido: {
     padding: Spacing.three,
     backgroundColor: UI.tarjeta,
+    gap: Spacing.two,
   },
   texto: {
     fontSize: 14,
     lineHeight: 22,
     color: UI.texto,
+  },
+  imagen: {
+    width: '100%',
+    height: 180,
+    borderRadius: 14,
+    backgroundColor: UI.fondoVerde,
+    borderWidth: 1,
+    borderColor: UI.bordeTarjeta,
+  },
+  referencia: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    color: UI.textoSuave,
+    textAlign: 'center',
   },
 });

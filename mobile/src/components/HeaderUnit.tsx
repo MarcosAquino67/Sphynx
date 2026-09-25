@@ -4,6 +4,8 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { useTraduccion } from '@/context/IdiomaContext';
+import { playClic } from '@/services/sonidos';
 
 type Props = {
   /** Título principal, ej. "Unidad Temática 1". */
@@ -24,14 +26,15 @@ type Props = {
 export function HeaderUnit({ titulo, subtitulo, variante = 'tarjeta', mostrarAtras = false }: Props) {
   const insets = useSafeAreaInsets();
   const topPad = Math.max(insets.top, 8);
+  const t = useTraduccion();
 
   if (variante === 'simple') {
     return (
       <View style={[styles.simpleWrap, { width: '100%', paddingTop: topPad + Spacing.two }]}>
         {mostrarAtras && (
-          <Pressable onPress={() => router.back()} style={[styles.atras, { alignSelf: 'flex-start', marginBottom: Spacing.two }]}>
+          <Pressable onPress={() => { playClic(); router.back(); }} style={[styles.atras, { alignSelf: 'flex-start', marginBottom: Spacing.two }]}>
             <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
-            <Text style={styles.atrasTexto}>Atrás</Text>
+            <Text style={styles.atrasTexto}>{t('header.atras')}</Text>
           </Pressable>
         )}
         <Text style={styles.simpleTitulo}>{titulo}</Text>
@@ -43,9 +46,9 @@ export function HeaderUnit({ titulo, subtitulo, variante = 'tarjeta', mostrarAtr
   return (
     <View style={{ width: '100%', paddingTop: mostrarAtras ? topPad : 0 }}>
       {mostrarAtras && (
-        <Pressable onPress={() => router.back()} style={[styles.atras, styles.atrasMargen]}>
+        <Pressable onPress={() => { playClic(); router.back(); }} style={[styles.atras, styles.atrasMargen]}>
           <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
-          <Text style={styles.atrasTexto}>Atrás</Text>
+          <Text style={styles.atrasTexto}>{t('header.atras')}</Text>
         </Pressable>
       )}
       <View style={styles.tarjeta}>

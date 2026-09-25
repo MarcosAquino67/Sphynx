@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
+import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
 import { borrarProgresoLecciones } from '@/storage/progreso';
 import { borrarEstadisticas } from '@/storage/estadisticas';
 
-const IDIOMA_KEY = '@sphynx/idioma';
 const SONIDO_KEY = '@sphynx/sonido';
 
 /**
@@ -19,96 +21,115 @@ const SONIDO_KEY = '@sphynx/sonido';
  * Las preferencias se guardan en AsyncStorage (offline-first).
  */
 export default function AjustesScreen() {
-  const [jopara, setJopara] = useState(false);
+  const { idioma, setIdioma } = useIdioma();
+  const t = useTraduccion();
+  const jopara = idioma === 'jopara';
   const [sonido, setSonido] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const idioma = await AsyncStorage.getItem(IDIOMA_KEY);
       const snd = await AsyncStorage.getItem(SONIDO_KEY);
-      setJopara(idioma === 'jopara');
       setSonido(snd !== 'off');
     })();
   }, []);
 
   const cambiarIdioma = async (valor: boolean) => {
-    setJopara(valor);
-    await AsyncStorage.setItem(IDIOMA_KEY, valor ? 'jopara' : 'es');
+    playClic();
+    await setIdioma(valor ? 'jopara' : 'es');
   };
 
   const cambiarSonido = async (valor: boolean) => {
+    playClic();
     setSonido(valor);
     await AsyncStorage.setItem(SONIDO_KEY, valor ? 'on' : 'off');
+    if (valor) playAmbiente();
+    else stopAmbiente();
   };
 
   const borrarProgreso = () => {
-    Alert.alert(
-      'Borrar progreso',
-      '¿Seguro? Se eliminarán las lecciones completadas de este dispositivo.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Borrar',
-          style: 'destructive',
-          onPress: async () => {
-            await Promise.all([borrarProgresoLecciones(), borrarEstadisticas()]);
-            Alert.alert('Listo', 'Progreso borrado. ¡A empezar de nuevo!');
-          },
+    Alert.alert(t('ajustes.borrar'), t('ajustes.borrarConfirm'), [
+      { text: t('comunes.cancelar'), style: 'cancel' },
+      {
+        text: t('comunes.borrar'),
+        style: 'destructive',
+        onPress: async () => {
+          await Promise.all([borrarProgresoLecciones(), borrarEstadisticas()]);
+          Alert.alert(t('comunes.listo'), t('ajustes.borrarOk'));
         },
-      ],
-    );
+      },
+    ]);
   };
 
   return (
     <View style={styles.fondo}>
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
-          <Text style={styles.titulo}>Ajustes</Text>
+          <Text style={styles.titulo}>{t('ajustes.titulo')}</Text>
 
           <View style={styles.tarjeta}>
             <FilaAjuste
               icono="translate"
-              titulo="Idioma Jopara"
-              descripcion={jopara ? 'Preguntas en guaraní' : 'Preguntas en español'}
+              titulo={t('ajustes.idioma')}
+              descripcion={jopara ? t('ajustes.idiomaDescJopara') : t('ajustes.idiomaDescEs')}
               control={<Switch value={jopara} onValueChange={cambiarIdioma} />}
             />
             <View style={styles.divisor} />
             <FilaAjuste
               icono="volume-high"
-              titulo="Sonido"
-              descripcion={sonido ? 'Activado' : 'Silenciado'}
+              titulo={t('ajustes.sonido')}
+              descripcion={sonido ? t('ajustes.sonidoOn') : t('ajustes.sonidoOff')}
               control={<Switch value={sonido} onValueChange={cambiarSonido} />}
             />
           </View>
 
           <Pressable
-            onPress={() => router.push('/bienvenida' as any)}
+            onPress={() => {
+              playClic();
+              router.push('/bienvenida' as any);
+            }}
             style={({ pressed }) => [styles.creditos, pressed && styles.creditosPresionado]}>
             <View style={styles.iconoFondo}>
               <MaterialCommunityIcons name="play" size={24} color={UI.azul} />
             </View>
             <View style={styles.textos}>
-              <Text style={styles.filaTitulo}>Ver presentación</Text>
-              <Text style={styles.filaDesc}>Bienvenida del robot de nuevo</Text>
+              <Text style={styles.filaTitulo}>{t('ajustes.verPresentacion')}</Text>
+              <Text style={styles.filaDesc}>{t('ajustes.verPresentacionDesc')}</Text>
             </View>
             <MaterialCommunityIcons name="chevron-right" size={24} color={UI.textoSuave} />
           </Pressable>
 
           <Pressable
-            onPress={() => router.push('/creditos' as any)}
+            onPress={() => {
+              playClic();
+              router.push('/creditos' as any);
+            }}
             style={({ pressed }) => [styles.creditos, pressed && styles.creditosPresionado]}>
             <View style={styles.iconoFondo}>
               <MaterialCommunityIcons name="information" size={24} color={UI.azul} />
             </View>
             <View style={styles.textos}>
-              <Text style={styles.filaTitulo}>Créditos y referencias</Text>
-              <Text style={styles.filaDesc}>Fuentes, licencias y atribuciones</Text>
+              <Text style={styles.filaTitulo}>{t('ajustes.creditos')}</Text>
+              <Text style={styles.filaDesc}>{t('ajustes.creditosDesc')}</Text>
             </View>
             <MaterialCommunityIcons name="chevron-right" size={24} color={UI.textoSuave} />
           </Pressable>
 
+          <Pressable
+            onPress={() => {
+              playClic();
+              Linking.openURL('https://projectsphynx.brianlucianovargascristaldo.workers.dev/');
+            }}
+            style={({ pressed }) => [styles.proyectoBtn, pressed && styles.creditosPresionado]}>
+            <Image source={require('@/assets/mascotas/gato-saludo.png')} style={styles.proyectoGato} contentFit="contain" />
+            <View style={styles.textos}>
+              <Text style={styles.filaTitulo}>{t('ajustes.proyecto')}</Text>
+              <Text style={styles.filaDesc}>{t('ajustes.proyectoDesc')}</Text>
+            </View>
+            <MaterialCommunityIcons name="open-in-new" size={22} color={UI.textoSuave} />
+          </Pressable>
+
           <Button3D
-            titulo="Borrar progreso"
+            titulo={t('ajustes.borrar')}
             icono="trash-can"
             color={UI.rojo}
             colorBorde={UI.rojoOscuro}
@@ -226,6 +247,27 @@ const styles = StyleSheet.create({
   },
   creditosPresionado: {
     opacity: 0.8,
+  },
+  proyectoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+    backgroundColor: UI.tarjeta,
+    borderRadius: RADIO_TARJETA,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    padding: Spacing.three,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  proyectoGato: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: UI.fondoVerde,
   },
   boton: {
     width: '100%',

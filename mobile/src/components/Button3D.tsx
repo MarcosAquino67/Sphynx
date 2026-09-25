@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, type StyleProp, type TextStyle, type ViewS
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { UI } from '@/constants/theme';
+import { playClic } from '@/services/sonidos';
 import type { IconoMCI } from '@/data/unidades';
 
 type Props = {
@@ -43,7 +44,10 @@ export function Button3D({
 }: Props) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        playClic();
+        onPress?.();
+      }}
       disabled={deshabilitado}
       style={({ pressed }) => [
         styles.boton,

@@ -4,6 +4,7 @@ import Svg, { Circle, Defs, Line, Marker, Path } from 'react-native-svg';
 
 import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
+import { playAcierto, playError } from '@/services/sonidos';
 import { Stepper } from '@/components/Stepper';
 
 const CX = 150;
@@ -82,6 +83,7 @@ export function SimuladorMCU() {
   const comprobar = () => {
     if (desafio.check({ v, T, f, ac, R })) {
       setGanados((g) => g + 1);
+      playAcierto();
       setMensaje('🎉 ¡Desafío logrado! ¡Iporã! Pasando al siguiente...');
       // Avanza solo al siguiente desafío tras festejarlo
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -90,6 +92,7 @@ export function SimuladorMCU() {
         setMensaje('');
       }, 1800);
     } else {
+      playError();
       setMensaje('❌ Todavía no... ¡Probá otra vez!');
     }
   };

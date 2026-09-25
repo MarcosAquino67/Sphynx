@@ -3,9 +3,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { RobotSaludo } from '@/components/RobotSaludo';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { UNIDADES, type Unidad } from '@/data/unidades';
+import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
+import { playClic } from '@/services/sonidos';
 
 /**
  * Pantalla INICIO: lista de unidades temáticas (mockup "UNIDADES TEMÁTICAS
@@ -13,9 +14,13 @@ import { UNIDADES, type Unidad } from '@/data/unidades';
  * Comenzar/Próximamente. Abajo, el robot mascota.
  */
 export default function InicioScreen() {
+  const { idioma } = useIdioma();
+  const t = useTraduccion();
+
   const abrirUnidad = (unidad: Unidad) => {
+    playClic();
     if (!unidad.disponible) {
-      Alert.alert('Próximamente', `"${unidad.nombre}" estará disponible muy pronto.`);
+      Alert.alert(t('inicio.proximamente'), `"${unidad.nombre}" estará disponible muy pronto.`);
       return;
     }
     router.push({ pathname: '/subtemas', params: { unidad: String(unidad.id) } } as any);
@@ -43,26 +48,18 @@ export default function InicioScreen() {
                 </View>
                 <View style={styles.textos}>
                   <Text style={styles.tarjetaTitulo}>{unidad.titulo}</Text>
-                  <Text style={styles.tarjetaDesc}>{unidad.descripcion}</Text>
-                  <Text style={styles.tarjetaJopara}>{unidad.descripcion_jopara}</Text>
+                  <Text style={styles.tarjetaDesc}>
+                    {idioma === 'jopara' ? unidad.descripcion_jopara : unidad.descripcion}
+                  </Text>
                   <View style={styles.pildora}>
                     <Text style={styles.pildoraTexto}>
-                      {unidad.disponible ? 'Comenzar' : 'Próximamente'}
+                      {unidad.disponible ? t('inicio.comenzar') : t('inicio.proximamente')}
                     </Text>
                   </View>
                 </View>
               </Pressable>
             ))}
           </View>
-
-          {/* Robot mascota al pie (entra con saludo animado) */}
-          <RobotSaludo
-            imagen={require('@/assets/mascotas/robot.png')}
-            ancho={190}
-            alto={190}
-            conMarco={false}
-            style={styles.robot}
-          />
         </ScrollView>
       </SafeAreaView>
     </View>
