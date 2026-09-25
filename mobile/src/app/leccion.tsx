@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,10 +11,10 @@ import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
-import { marcarCompletada } from '@/storage/progreso';
+import { marcarCompletada, obtenerCompletadas } from '@/storage/progreso';
 import { registrarRespuesta } from '@/storage/estadisticas';
 import { playAcierto, playError } from '@/services/sonidos';
-import { nombreLeccion, numeroLeccion } from '@/data/unidades';
+import { nombreLeccion, numeroLeccion, UNIDADES } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
 
@@ -34,6 +34,8 @@ export default function LeccionScreen() {
 
   const [indice, setIndice] = useState(0);
   const [seleccion, setSeleccion] = useState<string | null>(null);
+  const [mostrarInforme, setMostrarInforme] = useState(false);
+  const [progresoPct, setProgresoPct] = useState(0);
   const { idioma, setIdioma } = useIdioma();
   const t = useTraduccion();
   const { registrarRacha } = useUserProgress();
@@ -81,9 +83,16 @@ export default function LeccionScreen() {
     }
     await marcarCompletada(leccionId);
     await registrarRacha();
-    Alert.alert('🎉 ¡Lección completada!', '¡Apañá! Tu racha de estudio creció hoy.', [
-      { text: 'OK', onPress: () => router.back() },
-    ]);
+    const completadas = await obtenerCompletadas();
+    const total = UNIDADES.flatMap((u) => u.subtemas.flatMap((s) => s.niveles)).length || 8;
+    const pct = Math.round((completadas.length / total) * 100);
+    setProgresoPct(pct);
+    setMostrarInforme(true);
+  };
+
+  const cerrarInforme = () => {
+    setMostrarInforme(false);
+    router.back();
   };
 
   return (
@@ -161,6 +170,61 @@ export default function LeccionScreen() {
           )}
         </ScrollView>
       </SafeAreaView>
+
+      {mostrarInforme && (
+        <View style={styles.overlay}>
+          <View style={styles.informeCard}>
+            <Text style={styles.informeTitulo}>🎉 ¡Lección completada!</Text>
+            <Text style={styles.informeSub}>INFORME DE PROGRESO</Text>
+            <Text style={styles.informeMsg}>¡Javy'a! Tu racha de estudio creció hoy.</Text>
+
+            <View style={styles.barWrap}>
+              {/* Píldora con porcentaje arriba de la barra */}
+              <View style={styles.pillRow}>
+                <View style={{ width: `${progresoPct}%`, alignItems: 'flex-end' }}>
+                  <View
+                    style={[
+                      styles.barPill,
+                      {
+                        backgroundColor:
+                          progresoPct < 30 ? '#E84B3C' : progresoPct < 75 ? '#E9A825' : '#2EB872',
+                      },
+                    ]}>
+                    <Text style={styles.barPillText}>{progresoPct}%</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.pillTri,
+                      {
+                        borderTopColor:
+                          progresoPct < 30 ? '#E84B3C' : progresoPct < 75 ? '#E9A825' : '#2EB872',
+                      },
+                    ]}
+                  />
+                </View>
+                <View style={{ flex: 1 }} />
+              </View>
+
+              <View style={styles.barFondo}>
+                <View
+                  style={[
+                    styles.barRelleno,
+                    {
+                      width: `${progresoPct}%`,
+                      backgroundColor:
+                        progresoPct < 30 ? '#E84B3C' : progresoPct < 75 ? '#E9A825' : '#2EB872',
+                    },
+                  ]}
+                />
+              </View>
+            </View>
+
+            <Pressable onPress={cerrarInforme} style={styles.okBtn}>
+              <Text style={styles.okText}>OK</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -323,5 +387,102 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: UI.textoSuave,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.four,
+    zIndex: 50,
+  },
+  informeCard: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: Spacing.four,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+  },
+  informeTitulo: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: UI.texto,
+    textAlign: 'center',
+  },
+  informeSub: {
+    marginTop: 4,
+    fontSize: 16,
+    fontWeight: '900',
+    color: UI.texto,
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  informeMsg: {
+    marginTop: 8,
+    fontSize: 13,
+    color: UI.textoSuave,
+    textAlign: 'center',
+  },
+  barWrap: {
+    width: '100%',
+    marginTop: Spacing.three,
+  },
+  pillRow: {
+    flexDirection: 'row',
+    height: 28,
+    alignItems: 'flex-end',
+    marginBottom: 4,
+  },
+  barPill: {
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    minWidth: 44,
+    alignItems: 'center',
+  },
+  barPillText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  pillTri: {
+    width: 0,
+    height: 0,
+    alignSelf: 'center',
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 6,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    marginTop: -1,
+  },
+  barFondo: {
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#EAECEF',
+    overflow: 'hidden',
+  },
+  barRelleno: {
+    height: '100%',
+    borderRadius: 9,
+  },
+  okBtn: {
+    marginTop: Spacing.three,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#EAECEF',
+  },
+  okText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0E7A6B',
   },
 });
