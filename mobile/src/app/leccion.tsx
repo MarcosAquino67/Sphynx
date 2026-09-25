@@ -11,10 +11,10 @@ import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
-import { marcarCompletada, obtenerCompletadas } from '@/storage/progreso';
+import { marcarCompletada } from '@/storage/progreso';
 import { registrarRespuesta } from '@/storage/estadisticas';
 import { playAcierto, playError } from '@/services/sonidos';
-import { nombreLeccion, numeroLeccion, UNIDADES } from '@/data/unidades';
+import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
 
@@ -34,6 +34,7 @@ export default function LeccionScreen() {
 
   const [indice, setIndice] = useState(0);
   const [seleccion, setSeleccion] = useState<string | null>(null);
+  const [aciertosNivel, setAciertosNivel] = useState(0);
   const [mostrarInforme, setMostrarInforme] = useState(false);
   const [progresoPct, setProgresoPct] = useState(0);
   const { idioma, setIdioma } = useIdioma();
@@ -70,6 +71,7 @@ export default function LeccionScreen() {
     if (respondio) return;
     setSeleccion(opcion);
     const correcta = opcion === pregunta.respuesta_correcta;
+    if (correcta) setAciertosNivel((c) => c + 1);
     registrarRespuesta(correcta);
     if (correcta) playAcierto();
     else playError();
@@ -83,9 +85,8 @@ export default function LeccionScreen() {
     }
     await marcarCompletada(leccionId);
     await registrarRacha();
-    const completadas = await obtenerCompletadas();
-    const total = UNIDADES.flatMap((u) => u.subtemas.flatMap((s) => s.niveles)).length || 8;
-    const pct = Math.round((completadas.length / total) * 100);
+    // Barra por nivel: aciertos / 5 → %  (1/5=20%, 4/5=80%)
+    const pct = Math.round((aciertosNivel / preguntas.length) * 100);
     setProgresoPct(pct);
     setMostrarInforme(true);
   };
