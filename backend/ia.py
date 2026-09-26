@@ -6,7 +6,7 @@
 #   3) Pegala en backend/.env como GEMINI_API_KEY=tu_key
 #      (ese archivo NO se sube a git) y levantá con python iniciar.py.
 #
-# Opcional: IA_MODEL para forzar otro modelo (default gemini-2.5-flash).
+# Opcional: IA_MODEL para forzar otro modelo (default gemini-3.8-flash).
 # La key vive SOLO en el servidor: el celular nunca la ve,
 # la app llama a POST /api/ia de este backend.
 
@@ -64,7 +64,7 @@ def estado_proveedor() -> dict:
             "detalle": "Falta GEMINI_API_KEY. Creá una gratis en "
             "https://aistudio.google.com y ponela en backend/.env",
         }
-    return {"configurado": True, "proveedor": "gemini", "modelo": os.getenv("IA_MODEL", "gemini-2.5-flash")}
+    return {"configurado": True, "proveedor": "gemini", "modelo": os.getenv("IA_MODEL", "gemini-3.8-flash")}
 
 
 def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=None) -> str:
@@ -75,7 +75,7 @@ def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=N
             "Falta GEMINI_API_KEY en el servidor. Creá una gratis (sin tarjeta) "
             "en https://aistudio.google.com y ponela en backend/.env"
         )
-    modelo = os.getenv("IA_MODEL", "gemini-2.5-flash")
+    modelo = os.getenv("IA_MODEL", "gemini-3.8-flash")
 
     contents = []
     for m in historial or []:
@@ -99,7 +99,7 @@ def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=N
         json={
             "system_instruction": {"parts": [{"text": _system_para(idioma)}]},
             "contents": contents,
-            "generationConfig": {"maxOutputTokens": 600, "temperature": 0.7},
+            "generationConfig": {"maxOutputTokens": 600},
         },
         timeout=90.0,
     )
