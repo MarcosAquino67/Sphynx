@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,6 +9,7 @@ import { SimuladorLentes } from '@/components/SimuladorLentes';
 import { SimuladorMCU } from '@/components/SimuladorMCU';
 import { Spacing, UI } from '@/constants/theme';
 import { obtenerUnidad } from '@/data/unidades';
+import { playCuestionario, stopCuestionario } from '@/services/sonidos';
 
 /**
  * Pantalla EXPERIMENTAR: laboratorio interactivo del tema.
@@ -18,6 +20,14 @@ import { obtenerUnidad } from '@/data/unidades';
 export default function ExperimentoScreen() {
   const params = useLocalSearchParams<{ unidad?: string }>();
   const unidad = obtenerUnidad(Number(params.unidad ?? 1));
+
+  // Experimentar suena con cuestionario.mp3
+  useEffect(() => {
+    playCuestionario();
+    return () => {
+      stopCuestionario();
+    };
+  }, []);
 
   if (!unidad) {
     router.back();

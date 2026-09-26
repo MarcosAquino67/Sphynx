@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -10,7 +10,7 @@ import { LevelNode, type EstadoNivel } from '@/components/LevelNode';
 import { MaxContentWidth, RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { obtenerSubtema, obtenerUnidad, type Nivel } from '@/data/unidades';
 import { SelectorIdioma } from '@/components/SelectorIdioma';
-import { playClic } from '@/services/sonidos';
+import { playClic, playCuestionario, stopCuestionario } from '@/services/sonidos';
 import { obtenerCompletadas } from '@/storage/progreso';
 
 const NODO = 76;
@@ -61,6 +61,14 @@ export default function NivelesScreen() {
 
   const [completadas, setCompletadas] = useState<number[]>([]);
   const [seleccionado, setSeleccionado] = useState(0);
+
+  // Menú de ejercicios suena con cuestionario.mp3
+  useEffect(() => {
+    playCuestionario();
+    return () => {
+      stopCuestionario();
+    };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {

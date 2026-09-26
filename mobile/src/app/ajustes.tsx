@@ -10,7 +10,7 @@ import { Button3D } from '@/components/Button3D';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
-import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
+import { playAmbiente, playClic, stopAmbiente, stopCuestionario } from '@/services/sonidos';
 import { API_URL_KEY, getApiUrl } from '@/services/ia';
 import { borrarProgresoLecciones } from '@/storage/progreso';
 import { borrarEstadisticas } from '@/storage/estadisticas';
@@ -46,7 +46,10 @@ export default function AjustesScreen() {
     setSonido(valor);
     await AsyncStorage.setItem(SONIDO_KEY, valor ? 'on' : 'off');
     if (valor) playAmbiente();
-    else stopAmbiente();
+    else {
+      stopAmbiente();
+      stopCuestionario();
+    }
   };
 
   const guardarServidor = async () => {
