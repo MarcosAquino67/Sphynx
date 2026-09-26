@@ -8,6 +8,7 @@ import { AppHeader } from '@/components/app-header';
 import { Button3D } from '@/components/Button3D';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { SelectorIdioma } from '@/components/SelectorIdioma';
+import { TextoFormateado } from '@/components/TextoFormateado';
 import { PREGUNTAS_FISICA } from '@/data/preguntas';
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
@@ -167,7 +168,7 @@ export default function LeccionScreen() {
               <Text style={styles.feedbackTitulo}>
                 {esCorrecta ? t('leccion.correcto') : t('leccion.error')}
               </Text>
-              <Text style={styles.feedbackTexto}>{pregunta.explicacion_jopara}</Text>
+              <TextoFormateado texto={pregunta.explicacion_jopara} color={UI.textoSuave} />
               <Button3D
                 titulo={indice + 1 < preguntas.length ? t('leccion.siguiente') : t('leccion.finalizar')}
                 color={esCorrecta ? UI.verde : UI.rojo}
