@@ -1,4 +1,5 @@
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +11,7 @@ import { SelectorIdioma } from '@/components/SelectorIdioma';
 import { Spacing, UI } from '@/constants/theme';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { obtenerSubtema, obtenerUnidad } from '@/data/unidades';
+import { playAmbiente, stopAmbiente } from '@/services/sonidos';
 
 /**
  * Pantalla APRENDER / TEORÍA con secciones desplegables (acordeón).
@@ -23,6 +25,14 @@ export default function TeoriaScreen() {
   const { idioma } = useIdioma();
   const t = useTraduccion();
   const insets = useSafeAreaInsets();
+
+  // Aprender suena con ambiente_menu
+  useEffect(() => {
+    playAmbiente();
+    return () => {
+      stopAmbiente();
+    };
+  }, []);
 
   if (!unidad || !sub) {
     router.back();

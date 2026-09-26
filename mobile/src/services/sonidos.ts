@@ -8,6 +8,7 @@ let clicPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let aciertoPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let errorPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let ambientePlayer: ReturnType<typeof createAudioPlayer> | null = null;
+let cuestionarioPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 
 function getClic() {
   if (!clicPlayer) clicPlayer = createAudioPlayer(require('@/assets/sonidos/clic.mp3'));
@@ -28,6 +29,14 @@ function getAmbiente() {
     ambientePlayer.volume = 0.35;
   }
   return ambientePlayer;
+}
+function getCuestionario() {
+  if (!cuestionarioPlayer) {
+    cuestionarioPlayer = createAudioPlayer(require('@/assets/sonidos/cuestionario.mp3'));
+    cuestionarioPlayer.loop = true;
+    cuestionarioPlayer.volume = 0.35;
+  }
+  return cuestionarioPlayer;
 }
 
 async function sonidoActivado(): Promise<boolean> {
@@ -65,6 +74,7 @@ export async function playError(): Promise<void> {
 export async function playAmbiente(): Promise<void> {
   if (!(await sonidoActivado())) return;
   try {
+    cuestionarioPlayer?.pause();
     const p = getAmbiente();
     if (!p.playing) p.play();
   } catch {}
@@ -73,5 +83,20 @@ export async function playAmbiente(): Promise<void> {
 export async function stopAmbiente(): Promise<void> {
   try {
     ambientePlayer?.pause();
+  } catch {}
+}
+
+export async function playCuestionario(): Promise<void> {
+  if (!(await sonidoActivado())) return;
+  try {
+    ambientePlayer?.pause();
+    const p = getCuestionario();
+    if (!p.playing) p.play();
+  } catch {}
+}
+
+export async function stopCuestionario(): Promise<void> {
+  try {
+    cuestionarioPlayer?.pause();
   } catch {}
 }

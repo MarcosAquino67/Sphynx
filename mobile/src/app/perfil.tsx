@@ -165,6 +165,11 @@ export default function PerfilScreen() {
             </>
           ) : (
             <>
+              <Image
+                source={require('@/assets/chatbotia/gato-cara.jpg')}
+                style={styles.mascotaTop}
+                contentFit="cover"
+              />
               <View style={styles.avatarFondo}>
                 <Image source={avatarSource} style={styles.avatar} contentFit="contain" />
               </View>
@@ -229,6 +234,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: UI.bordeTarjeta,
     overflow: 'hidden',
+  },
+  mascotaTop: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    marginBottom: Spacing.two,
   },
   avatar: {
     width: '100%',

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -14,7 +14,7 @@ import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { useUserProgress } from '@/hooks/use-user-progress';
 import { marcarCompletada } from '@/storage/progreso';
 import { registrarRespuesta } from '@/storage/estadisticas';
-import { playAcierto, playError } from '@/services/sonidos';
+import { playAcierto, playCuestionario, playError, stopCuestionario } from '@/services/sonidos';
 import { nombreLeccion, numeroLeccion } from '@/data/unidades';
 
 const LETRAS = ['A', 'B', 'C', 'D'];
@@ -42,6 +42,14 @@ export default function LeccionScreen() {
   const t = useTraduccion();
   const { registrarRacha } = useUserProgress();
   const insets = useSafeAreaInsets();
+
+  // Cuestionario suena con cuestionario.mp3
+  useEffect(() => {
+    playCuestionario();
+    return () => {
+      stopCuestionario();
+    };
+  }, []);
 
   if (preguntas.length === 0) {
     return (
