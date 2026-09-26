@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -11,6 +11,7 @@ import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import type { IconoMCI } from '@/data/unidades';
 import { useIdioma, useTraduccion } from '@/context/IdiomaContext';
 import { playAmbiente, playClic, stopAmbiente } from '@/services/sonidos';
+import { API_URL_KEY, getApiUrl } from '@/services/ia';
 import { borrarProgresoLecciones } from '@/storage/progreso';
 import { borrarEstadisticas } from '@/storage/estadisticas';
 
@@ -25,11 +26,13 @@ export default function AjustesScreen() {
   const t = useTraduccion();
   const jopara = idioma === 'jopara';
   const [sonido, setSonido] = useState(true);
+  const [servidor, setServidor] = useState('');
 
   useEffect(() => {
     (async () => {
       const snd = await AsyncStorage.getItem(SONIDO_KEY);
       setSonido(snd !== 'off');
+      setServidor(await getApiUrl());
     })();
   }, []);
 
@@ -44,6 +47,14 @@ export default function AjustesScreen() {
     await AsyncStorage.setItem(SONIDO_KEY, valor ? 'on' : 'off');
     if (valor) playAmbiente();
     else stopAmbiente();
+  };
+
+  const guardarServidor = async () => {
+    playClic();
+    const limpio = servidor.trim().replace(/\/+$/, '');
+    setServidor(limpio);
+    await AsyncStorage.setItem(API_URL_KEY, limpio);
+    Alert.alert(t('comunes.listo'), t('ajustes.guardadoDesc'));
   };
 
   const borrarProgreso = () => {
@@ -79,6 +90,33 @@ export default function AjustesScreen() {
               titulo={t('ajustes.sonido')}
               descripcion={sonido ? t('ajustes.sonidoOn') : t('ajustes.sonidoOff')}
               control={<Switch value={sonido} onValueChange={cambiarSonido} />}
+            />
+          </View>
+
+          <View style={styles.tarjeta}>
+            <FilaAjuste
+              icono="server-network"
+              titulo={t('ajustes.servidor')}
+              descripcion={t('ajustes.servidorDesc')}
+              control={null}
+            />
+            <TextInput
+              style={styles.input}
+              value={servidor}
+              onChangeText={setServidor}
+              placeholder={t('ajustes.servidorPlaceholder')}
+              placeholderTextColor={UI.textoSuave}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+            />
+            <Button3D
+              titulo={t('ajustes.guardar')}
+              icono="check"
+              color={UI.azul}
+              colorBorde={UI.azulOscuro}
+              onPress={guardarServidor}
+              style={styles.botonGuardar}
             />
           </View>
 
@@ -229,6 +267,21 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: UI.bordeTarjeta,
     marginVertical: Spacing.two,
+  },
+  input: {
+    marginTop: Spacing.two,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.two,
+    fontSize: 14,
+    color: UI.texto,
+  },
+  botonGuardar: {
+    width: '100%',
+    marginTop: Spacing.two,
   },
   creditos: {
     flexDirection: 'row',
