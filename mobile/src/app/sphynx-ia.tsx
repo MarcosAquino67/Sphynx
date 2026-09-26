@@ -156,7 +156,7 @@ export default function SphynxIAScreen() {
             <View style={styles.cabTextos}>
               <Text style={styles.titulo}>SPHYNX IA</Text>
               <Text style={styles.sub}>
-                {jopara ? 'Solo Física rehegua • Muse Spark' : 'Solo Física • Muse Spark'}
+                {jopara ? 'Solo Física rehegua' : 'Solo Física'}
               </Text>
             </View>
           </View>
