@@ -1,24 +1,22 @@
 import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Animated,
   FlatList,
   Image,
   KeyboardAvoidingView,
-  PanResponder,
   Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
-  useWindowDimensions,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SelectorIdioma } from '@/components/SelectorIdioma';
+import { TextoFormateado } from '@/components/TextoFormateado';
 import { Spacing, UI } from '@/constants/theme';
 import { useIdioma } from '@/context/IdiomaContext';
 import { preguntarSphynxIA, type MensajeIA } from '@/services/ia';
@@ -42,7 +40,6 @@ const GATO_PENSANDO = require('@/assets/chatbotia/gato-ia-pensando.jpg');
 export default function SphynxIAScreen() {
   const { idioma } = useIdioma();
   const jopara = idioma === 'jopara';
-  const { width, height } = useWindowDimensions();
   const [mensajes, setMensajes] = useState<Item[]>([
     {
       id: nid(),
@@ -57,25 +54,6 @@ export default function SphynxIAScreen() {
   const [cargando, setCargando] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const lista = useRef<FlatList<Item>>(null);
-
-  // Gato flotante arrastrable (se queda donde lo soltás)
-  const pan = useRef(new Animated.ValueXY({ x: 12, y: Math.round(height * 0.45) })).current;
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        pan.setOffset({ x: (pan.x as any)._value, y: (pan.y as any)._value });
-        pan.setValue({ x: 0, y: 0 });
-      },
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-        useNativeDriver: false,
-      }),
-      onPanResponderRelease: () => {
-        pan.flattenOffset();
-      },
-    }),
-  ).current;
 
   const tomarDeGaleria = async () => {
     setMenuAbierto(false);
@@ -175,9 +153,11 @@ export default function SphynxIAScreen() {
                 {item.imagen ? (
                   <Image source={{ uri: item.imagen }} style={styles.miniFoto} />
                 ) : null}
-                <Text style={[styles.msgTexto, item.rol === 'usuario' && styles.msgYo]}>
-                  {item.texto}
-                </Text>
+                {item.rol === 'ia' ? (
+                  <TextoFormateado texto={item.texto} />
+                ) : (
+                  <Text style={[styles.msgTexto, styles.msgYo]}>{item.texto}</Text>
+                )}
               </View>
             )}
           />
@@ -251,23 +231,14 @@ export default function SphynxIAScreen() {
           </View>
         </KeyboardAvoidingView>
 
-        {/* Gato científico flotante: arrastralo a donde quieras */}
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={[
-            styles.gatoFlotante,
-            {
-              maxWidth: width - 96,
-              maxHeight: height - 220,
-              transform: [{ translateX: pan.x }, { translateY: pan.y }],
-            },
-          ]}>
+        {/* Gato científico quieto al costado */}
+        <View style={styles.gatoFijo} pointerEvents="none">
           <Image
             source={cargando ? GATO_PENSANDO : GATO_FELIZ}
             style={styles.gatoImg}
             resizeMode="cover"
           />
-        </Animated.View>
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -292,11 +263,12 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     borderWidth: 2,
     borderColor: UI.bordeTarjeta,
+    backgroundColor: '#FFFFFF',
   },
   cabTextos: {
     flex: 1,
@@ -313,7 +285,8 @@ const styles = StyleSheet.create({
     color: UI.textoSuave,
   },
   chat: {
-    paddingHorizontal: Spacing.four,
+    paddingLeft: 76,
+    paddingRight: Spacing.four,
     paddingVertical: Spacing.two,
     gap: Spacing.two,
     paddingBottom: 110,
@@ -461,13 +434,13 @@ const styles = StyleSheet.create({
   btnOff: {
     opacity: 0.4,
   },
-  gatoFlotante: {
+  gatoFijo: {
     position: 'absolute',
-    left: 0,
-    top: 0,
-    width: 110,
-    height: 110,
-    zIndex: 50,
+    left: 6,
+    top: '38%',
+    width: 62,
+    height: 62,
+    zIndex: 1,
   },
   gatoImg: {
     width: '100%',
