@@ -4,7 +4,6 @@ import {
   FlatList,
   Image,
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -128,7 +127,8 @@ export default function SphynxIAScreen() {
       <SafeAreaView style={styles.safe} edges={['left', 'right']}>
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          behavior="padding"
+          keyboardVerticalOffset={0}>
           {/* Cabecera */}
           <View style={styles.cabecera}>
             <Image source={GATO_CARA} style={styles.avatar} />
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     color: UI.textoSuave,
   },
   chat: {
-    paddingLeft: 76,
+    paddingLeft: 116,
     paddingRight: Spacing.four,
     paddingVertical: Spacing.two,
     gap: Spacing.two,
@@ -437,10 +437,10 @@ const styles = StyleSheet.create({
   },
   gatoFijo: {
     position: 'absolute',
-    left: 6,
+    left: 8,
     top: '38%',
-    width: 62,
-    height: 62,
+    width: 100,
+    height: 56,
     zIndex: 1,
   },
   gatoImg: {
