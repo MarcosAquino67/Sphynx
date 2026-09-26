@@ -1,15 +1,18 @@
 import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Image,
   KeyboardAvoidingView,
+  PanResponder,
   Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -25,15 +28,21 @@ type Item = MensajeIA & { id: string; imagen?: string | null };
 let seq = 0;
 const nid = () => `m${Date.now()}-${seq++}`;
 
+const GATO_FELIZ = require('@/assets/chatbotia/gato-ia-feliz.jpg');
+const GATO_PENSANDO = require('@/assets/chatbotia/gato-ia-pensando.jpg');
+
 /**
  * SPHYNX IA — chat con Muse Spark 1.3 (vía backend /api/ia).
  * Solo responde Física, en ES o Jopara según el selector.
- * Acepta foto (ejercicio/diagrama): la IA la analiza solo si es física.
- * Necesita internet + backend con OPENROUTER_API_KEY (ver backend/ia.py).
+ * Gato científico arrastrable a cualquier parte de la pantalla
+ * (feliz normal, pensando mientras la IA responde).
+ * Botón + estilo ChatGPT: subir foto de galería o sacar foto con cámara.
+ * Necesita internet + backend con OPENCODE_API_KEY (ver backend/ia.py).
  */
 export default function SphynxIAScreen() {
   const { idioma } = useIdioma();
   const jopara = idioma === 'jopara';
+  const { width, height } = useWindowDimensions();
   const [mensajes, setMensajes] = useState<Item[]>([
     {
       id: nid(),
@@ -46,13 +55,48 @@ export default function SphynxIAScreen() {
   const [texto, setTexto] = useState('');
   const [imagen, setImagen] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
   const lista = useRef<FlatList<Item>>(null);
 
-  const elegirImagen = async () => {
+  // Gato flotante arrastrable (se queda donde lo soltás)
+  const pan = useRef(new Animated.ValueXY({ x: 12, y: Math.round(height * 0.45) })).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        pan.setOffset({ x: (pan.x as any)._value, y: (pan.y as any)._value });
+        pan.setValue({ x: 0, y: 0 });
+      },
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: () => {
+        pan.flattenOffset();
+      },
+    }),
+  ).current;
+
+  const tomarDeGaleria = async () => {
+    setMenuAbierto(false);
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) return;
     const res = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.6,
+      base64: true,
+    });
+    if (!res.canceled && res.assets[0]?.base64) {
+      setImagen(`data:image/jpeg;base64,${res.assets[0].base64}`);
+    }
+  };
+
+  const sacarFoto = async () => {
+    setMenuAbierto(false);
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (!perm.granted) return;
+    const res = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 0.6,
       base64: true,
@@ -70,6 +114,7 @@ export default function SphynxIAScreen() {
     setMensajes((prev) => [...prev, nuevo]);
     setTexto('');
     setImagen(null);
+    setMenuAbierto(false);
     setCargando(true);
     try {
       const respuesta = await preguntarSphynxIA({
@@ -107,9 +152,7 @@ export default function SphynxIAScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           {/* Cabecera */}
           <View style={styles.cabecera}>
-            <View style={styles.avatarFondo}>
-              <MaterialCommunityIcons name="cat" size={28} color={UI.azul} />
-            </View>
+            <Image source={GATO_FELIZ} style={styles.avatar} />
             <View style={styles.cabTextos}>
               <Text style={styles.titulo}>SPHYNX IA</Text>
               <Text style={styles.sub}>
@@ -157,10 +200,36 @@ export default function SphynxIAScreen() {
             </View>
           )}
 
-          {/* Entrada */}
+          {/* Menú desplegable estilo ChatGPT */}
+          {menuAbierto && (
+            <View style={styles.menu}>
+              <Pressable onPress={tomarDeGaleria} style={styles.menuItem}>
+                <View style={[styles.menuIcono, { backgroundColor: '#E3F2FD' }]}>
+                  <MaterialCommunityIcons name="image" size={24} color={UI.azul} />
+                </View>
+                <Text style={styles.menuTexto}>{jopara ? 'Ehupi ta\'anga' : 'Subir foto'}</Text>
+              </Pressable>
+              <View style={styles.menuDivisor} />
+              <Pressable onPress={sacarFoto} style={styles.menuItem}>
+                <View style={[styles.menuIcono, { backgroundColor: '#E8F5E9' }]}>
+                  <MaterialCommunityIcons name="camera" size={24} color={UI.verde} />
+                </View>
+                <Text style={styles.menuTexto}>{jopara ? 'Esaca foto' : 'Sacar foto'}</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Entrada: + | caja texto | enviar */}
           <View style={styles.entrada}>
-            <Pressable onPress={elegirImagen} style={styles.btnFoto} accessibilityLabel="Subir imagen">
-              <MaterialCommunityIcons name="image-plus" size={24} color={UI.azul} />
+            <Pressable
+              onPress={() => setMenuAbierto((v) => !v)}
+              style={styles.btnMas}
+              accessibilityLabel="Más opciones">
+              <MaterialCommunityIcons
+                name={menuAbierto ? 'close' : 'plus'}
+                size={26}
+                color={UI.texto}
+              />
             </Pressable>
             <TextInput
               style={styles.input}
@@ -181,6 +250,24 @@ export default function SphynxIAScreen() {
             </Pressable>
           </View>
         </KeyboardAvoidingView>
+
+        {/* Gato científico flotante: arrastralo a donde quieras */}
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={[
+            styles.gatoFlotante,
+            {
+              maxWidth: width - 96,
+              maxHeight: height - 220,
+              transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            },
+          ]}>
+          <Image
+            source={cargando ? GATO_PENSANDO : GATO_FELIZ}
+            style={styles.gatoImg}
+            resizeMode="cover"
+          />
+        </Animated.View>
       </SafeAreaView>
     </View>
   );
@@ -204,15 +291,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.two,
   },
-  avatarFondo: {
+  avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: UI.tarjeta,
     borderWidth: 2,
     borderColor: UI.bordeTarjeta,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   cabTextos: {
     flex: 1,
@@ -232,6 +316,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingVertical: Spacing.two,
     gap: Spacing.two,
+    paddingBottom: 110,
   },
   burbuja: {
     maxWidth: '85%',
@@ -297,6 +382,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  menu: {
+    marginHorizontal: Spacing.four,
+    marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    borderWidth: 2,
+    borderColor: UI.bordeTarjeta,
+    paddingVertical: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: 10,
+  },
+  menuIcono: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuTexto: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: UI.texto,
+  },
+  menuDivisor: {
+    height: 1,
+    backgroundColor: UI.bordeTarjeta,
+    marginHorizontal: Spacing.three,
+  },
   entrada: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -305,7 +428,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.three,
     paddingTop: 4,
   },
-  btnFoto: {
+  btnMas: {
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -337,5 +460,26 @@ const styles = StyleSheet.create({
   },
   btnOff: {
     opacity: 0.4,
+  },
+  gatoFlotante: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+    zIndex: 50,
+  },
+  gatoImg: {
+    width: '100%',
+    height: '100%',
   },
 });
