@@ -57,6 +57,16 @@ export default function UnidadScreen() {
               style={styles.boton}
             />
             <Button3D
+              titulo={t('unidad.experimentar')}
+              icono="flask"
+              color={UI.azul}
+              colorBorde={UI.azulOscuro}
+              onPress={() =>
+                router.push({ pathname: '/experimento', params: { unidad: String(unidad.id) } } as any)
+              }
+              style={styles.boton}
+            />
+            <Button3D
               titulo={t('unidad.ejercicios')}
               icono="pencil"
               color={UI.verde}
