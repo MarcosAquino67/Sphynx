@@ -105,7 +105,7 @@ def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=N
         json={
             "system_instruction": {"parts": [{"text": _system_para(idioma)}]},
             "contents": contents,
-            "generationConfig": {"maxOutputTokens": 600},
+            "generationConfig": {"maxOutputTokens": 2048},
         },
         timeout=90.0,
     )

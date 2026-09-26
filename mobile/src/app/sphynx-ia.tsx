@@ -264,9 +264,9 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.two,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     borderWidth: 2,
     borderColor: UI.bordeTarjeta,
     backgroundColor: '#FFFFFF',
