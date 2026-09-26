@@ -7,14 +7,7 @@ BACKEND_DIR = os.path.join(BASE_DIR, "backend")
 MOBILE_DIR = os.path.join(BASE_DIR, "mobile")
 
 # Variables que el backend de SPHYNX IA puede usar (ver backend/ia.py)
-CLAVES_IA = (
-    "GEMINI_API_KEY",
-    "OPENCODE_API_KEY",
-    "ZEN_API_KEY",
-    "OPENROUTER_API_KEY",
-    "IA_PROVIDER",
-    "IA_MODEL",
-)
+CLAVES_IA = ("GEMINI_API_KEY", "IA_MODEL")
 
 
 def leer_env_archivo():
@@ -61,7 +54,7 @@ def main():
     print("¡Listo! Se abrieron dos ventanas CMD:")
     print("  1) Backend + SPHYNX IA (http://127.0.0.1:8000, visible en tu Wi-Fi)")
     print("  2) App Móvil Expo (QR para escanear con Expo Go)")
-    if not any(os.environ.get(k) or archivo.get(k) for k in CLAVES_IA[:4]):
+    if not any(os.environ.get(k) or archivo.get(k) for k in CLAVES_IA[:1]):
         print("")
         print("AVISO: no hay API key -> SPHYNX IA no va a responder.")
         print("  Crea backend/.env con GEMINI_API_KEY=tu_key")
