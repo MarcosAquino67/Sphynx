@@ -1,20 +1,54 @@
-# ia.py — SPHYNX IA: proxy a Muse Spark 1.3 vía OpenRouter.
+# ia.py — SPHYNX IA: proxy a Muse Spark 1.3.
 #
-# La API key vive SOLO en el servidor (variable de entorno OPENROUTER_API_KEY).
-# El celular nunca la ve: la app llama a POST /api/ia de este backend.
+# Dos proveedores (se elige solo):
+#   1) OpenCode Zen (recomendado, GRATIS por tiempo limitado):
+#      - Entrá a https://opencode.ai, iniciá sesión y copiá tu API key.
+#      - Definí OPENCODE_API_KEY antes de levantar uvicorn.
+#      - Usa el modelo muse-spark-1.3-contributor-free (Free/Free).
+#      - Ver modelos: curl https://opencode.ai/zen/v1/models
+#   2) OpenRouter (alternativa): OPENROUTER_API_KEY de
+#      https://openrouter.ai/settings/keys, modelo
+#      meta/muse-spark-1.3-contributor.
 #
-# Modelo configurable con MUSE_SPARK_MODEL (default: tier contributor barato).
-# Si existe variante :free del modelo, se puede usar esa sin costo:
-#   MUSE_SPARK_MODEL=meta/muse-spark-1.3-contributor:free
-#
-# Conseguí la key gratis en: https://openrouter.ai/settings/keys
+# Variables opcionales: IA_PROVIDER=zen|openrouter|auto (default auto),
+# IA_MODEL para forzar otro modelo. La key vive SOLO en el servidor:
+# el celular nunca la ve, la app llama a POST /api/ia de este backend.
 
 import os
 
 import httpx
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = os.getenv("MUSE_SPARK_MODEL", "meta/muse-spark-1.3-contributor")
+ZEN_URL = "https://opencode.ai/zen/v1/chat/completions"
+
+
+def _config():
+    """Devuelve (url, api_key, modelo, headers_extra) según el proveedor."""
+    provider = os.getenv("IA_PROVIDER", "auto").lower()
+    zen_key = os.getenv("OPENCODE_API_KEY") or os.getenv("ZEN_API_KEY")
+    or_key = os.getenv("OPENROUTER_API_KEY")
+    if provider == "auto":
+        provider = "zen" if zen_key else "openrouter"
+    if provider == "zen":
+        if not zen_key:
+            raise RuntimeError(
+                "Falta OPENCODE_API_KEY en el servidor. "
+                "Entrá a https://opencode.ai, iniciá sesión, copiá tu key y "
+                "definila como variable de entorno antes de levantar uvicorn."
+            )
+        modelo = os.getenv("IA_MODEL", "muse-spark-1.3-contributor-free")
+        return ZEN_URL, zen_key, modelo, {}
+    if not or_key:
+        raise RuntimeError(
+            "Falta OPENROUTER_API_KEY en el servidor. "
+            "Conseguí una gratis en https://openrouter.ai/settings/keys "
+            "y definila como variable de entorno antes de levantar uvicorn."
+        )
+    modelo = os.getenv("IA_MODEL", "meta/muse-spark-1.3-contributor")
+    return OPENROUTER_URL, or_key, modelo, {
+        "HTTP-Referer": "https://github.com/MarcosAquino67/Sphynx",
+        "X-Title": "Sphynx IA",
+    }
 
 SYSTEM_ES = (
     "Sos SPHYNX IA, tutor de Física para estudiantes de 3er curso "
@@ -56,14 +90,8 @@ def _system_para(idioma: str) -> str:
 
 
 def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=None) -> str:
-    """Llama a Muse Spark vía OpenRouter y devuelve el texto de respuesta."""
-    api_key = os.getenv("OPENROUTER_API_KEY", "")
-    if not api_key:
-        raise RuntimeError(
-            "Falta OPENROUTER_API_KEY en el servidor. "
-            "Conseguí una gratis en https://openrouter.ai/settings/keys "
-            "y definila como variable de entorno antes de levantar uvicorn."
-        )
+    """Llama a Muse Spark (Zen u OpenRouter) y devuelve el texto de respuesta."""
+    url, api_key, modelo, headers_extra = _config()
 
     mensajes = [{"role": "system", "content": _system_para(idioma)}]
     for m in historial or []:
@@ -79,14 +107,13 @@ def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=N
     mensajes.append({"role": "user", "content": contenido})
 
     resp = httpx.post(
-        OPENROUTER_URL,
+        url,
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/MarcosAquino67/Sphynx",
-            "X-Title": "Sphynx IA",
+            **headers_extra,
         },
-        json={"model": MODEL, "messages": mensajes, "max_tokens": 500, "temperature": 0.7},
+        json={"model": modelo, "messages": mensajes, "max_tokens": 500, "temperature": 0.7},
         timeout=60.0,
     )
     resp.raise_for_status()
