@@ -28,6 +28,7 @@ const nid = () => `m${Date.now()}-${seq++}`;
 
 const GATO_FELIZ = require('@/assets/chatbotia/gato-ia-feliz.png');
 const GATO_PENSANDO = require('@/assets/chatbotia/gato-ia-pensando.png');
+const GATO_CARA = require('@/assets/chatbotia/gato-cara.jpg');
 
 /**
  * SPHYNX IA — chat con Muse Spark 1.3 (vía backend /api/ia).
@@ -130,7 +131,7 @@ export default function SphynxIAScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           {/* Cabecera */}
           <View style={styles.cabecera}>
-            <Image source={GATO_FELIZ} style={styles.avatar} />
+            <Image source={GATO_CARA} style={styles.avatar} />
             <View style={styles.cabTextos}>
               <Text style={styles.titulo}>SPHYNX IA</Text>
               <Text style={styles.sub}>
