@@ -216,6 +216,15 @@ def _llamar_gemini(url, api_key, sistema, texto, imagen_base64, historial) -> st
     return "\n".join(textos).strip()
 
 
+def estado_proveedor() -> dict:
+    """Dice qué proveedor IA está activo, sin mostrar la key."""
+    try:
+        proveedor, _, _, modelo, _ = _config()
+        return {"configurado": True, "proveedor": proveedor, "modelo": modelo}
+    except RuntimeError as e:
+        return {"configurado": False, "detalle": str(e)}
+
+
 def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=None) -> str:
     """Llama al proveedor configurado y devuelve el texto de respuesta."""
     proveedor, url, api_key, modelo, headers_extra = _config()

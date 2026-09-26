@@ -4,7 +4,7 @@ from typing import Optional
 
 from data_preguntas import PREGUNTAS_FISICA
 from database import inicializar_bd, get_connection
-from ia import preguntar_ia
+from ia import estado_proveedor, preguntar_ia
 from models import IAPregunta, SincronizacionPayload
 
 app = FastAPI(
@@ -76,6 +76,12 @@ def sincronizar_progreso(payload: SincronizacionPayload):
         "mensaje": f"Se sincronizaron {cantidad} respuestas del usuario {payload.usuario_id}",
         "registros_procesados": cantidad
     }
+
+
+@app.get("/api/ia/estado", summary="Ver proveedor IA activo (sin mostrar la key)")
+def estado_sphynx_ia():
+    """Para diagnosticar: dice si hay key y qué proveedor/modelo se usa."""
+    return estado_proveedor()
 
 
 @app.post("/api/ia", summary="Preguntar a SPHYNX IA (Muse Spark, solo física)")
