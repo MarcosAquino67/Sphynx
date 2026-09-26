@@ -4,7 +4,8 @@ from typing import Optional
 
 from data_preguntas import PREGUNTAS_FISICA
 from database import inicializar_bd, get_connection
-from models import SincronizacionPayload
+from ia import preguntar_ia
+from models import IAPregunta, SincronizacionPayload
 
 app = FastAPI(
     title="Sphynx API - Física en Jopara",
@@ -75,3 +76,26 @@ def sincronizar_progreso(payload: SincronizacionPayload):
         "mensaje": f"Se sincronizaron {cantidad} respuestas del usuario {payload.usuario_id}",
         "registros_procesados": cantidad
     }
+
+
+@app.post("/api/ia", summary="Preguntar a SPHYNX IA (Muse Spark, solo física)")
+def preguntar_sphynx_ia(payload: IAPregunta):
+    """
+    Proxy a Muse Spark 1.3 vía OpenRouter. La API key vive en el servidor.
+    Solo responde física (ES/Jopara según payload.idioma); acepta imagen opcional.
+    """
+    if not payload.texto.strip() and not payload.imagen_base64:
+        raise HTTPException(status_code=400, detail="Mandá una pregunta o una imagen.")
+    idioma = payload.idioma if payload.idioma in ("es", "jopara") else "es"
+    try:
+        respuesta = preguntar_ia(
+            texto=payload.texto.strip() or "¿Qué se ve en esta imagen? ¿Es de física?",
+            idioma=idioma,
+            imagen_base64=payload.imagen_base64,
+            historial=[m.model_dump() for m in payload.historial[-8:]],
+        )
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"La IA no respondió, probá de nuevo: {e}")
+    return {"status": "exito", "respuesta": respuesta, "idioma": idioma}
