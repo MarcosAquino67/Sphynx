@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { AccordionItem } from '@/components/AccordionItem';
 import { Button3D } from '@/components/Button3D';
+import { MCUTutorial } from '@/components/MCUTutorial';
 import { RobotSaludo } from '@/components/RobotSaludo';
 import { SelectorIdioma } from '@/components/SelectorIdioma';
 import { Spacing, UI } from '@/constants/theme';
@@ -61,9 +62,9 @@ export default function TeoriaScreen() {
             conMarco={false}
           />
 
-          {/* Secciones desplegables (la primera empieza abierta) */}
+          {/* Secciones desplegables (todas empiezan cerradas) */}
           <View style={styles.acordeon}>
-            {sub.secciones.map((sec, i) => (
+            {sub.secciones.map((sec) => (
               <AccordionItem
                 key={sec.titulo}
                 titulo={sec.titulo}
@@ -71,7 +72,7 @@ export default function TeoriaScreen() {
                 imagen={sec.imagen}
                 referencia={sec.referencia}
                 referenciaUrl={sec.referenciaUrl}
-                abiertoInicial={i === 0}
+                abiertoInicial={false}
               />
             ))}
           </View>
@@ -96,6 +97,9 @@ export default function TeoriaScreen() {
           </Pressable>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Tutorial videojuego solo la 1ª vez en Movimiento Circular (U1·S1) */}
+      {unidad.id === 1 && sub.id === 1 && <MCUTutorial />}
     </ImageBackground>
   );
 }
