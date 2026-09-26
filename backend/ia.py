@@ -55,9 +55,15 @@ def _system_para(idioma: str) -> str:
     return SYSTEM_JOPARA if idioma == "jopara" else SYSTEM_ES
 
 
+def _clean_key() -> str:
+    """Lee la key sin espacios, saltos ni comillas pegados por accidente."""
+    key = os.getenv("GEMINI_API_KEY", "")
+    return "".join(key.split()).strip("\"'")
+
+
 def estado_proveedor() -> dict:
     """Dice qué proveedor IA está activo, sin mostrar la key."""
-    key = os.getenv("GEMINI_API_KEY", "")
+    key = _clean_key()
     if not key:
         return {
             "configurado": False,
@@ -69,7 +75,7 @@ def estado_proveedor() -> dict:
 
 def preguntar_ia(texto: str, idioma: str = "es", imagen_base64=None, historial=None) -> str:
     """Pregunta a Gemini y devuelve el texto de respuesta."""
-    api_key = os.getenv("GEMINI_API_KEY", "")
+    api_key = _clean_key()
     if not api_key:
         raise RuntimeError(
             "Falta GEMINI_API_KEY en el servidor. Creá una gratis (sin tarjeta) "
