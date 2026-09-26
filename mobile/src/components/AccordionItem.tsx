@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 
 import { RADIO_TARJETA, Spacing, UI } from '@/constants/theme';
 import { ExternalLink } from '@/components/external-link';
+import { TextoFormateado } from '@/components/TextoFormateado';
 import { playClic } from '@/services/sonidos';
 
 type Props = {
@@ -48,7 +49,7 @@ export function AccordionItem({ titulo, contenido, abiertoInicial = false, image
       </Pressable>
       {abierto && (
         <View style={styles.contenido}>
-          <Text style={styles.texto}>{contenido}</Text>
+          <TextoFormateado texto={contenido} />
           {imagen && <Image source={imagen} style={styles.imagen} contentFit="contain" transition={200} />}
           {referencia && (
             referenciaUrl ? (
